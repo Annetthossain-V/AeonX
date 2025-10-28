@@ -36,7 +36,7 @@ SECTIONS
     *(.note.gnu.build-id)
   } :rodata
 
-  . = ALIGN(CONSTANT(MAXPAGESIZE))
+  . = ALIGN(CONSTANT(MAXPAGESIZE));
 
   .data : {
     *(.data .data.*)
