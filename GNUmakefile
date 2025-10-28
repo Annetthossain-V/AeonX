@@ -7,7 +7,7 @@ CC := clang
 LD := ld.lld
 
 # controllable C Flags
-CFLAGS := -O2 -pipe
+CFLAGS := -O2 -pipe -Wno-unused-parameter
 CPPFLAGS :=
 NASMFLAGS :=
 LDFLAGS := -O2
