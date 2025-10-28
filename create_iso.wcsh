@@ -1,4 +1,4 @@
-git clone https://codeberg.org/Limine/Limine.git limine --branch=v10.x-binary --dept=1 
+git clone https://codeberg.org/Limine/Limine.git limine --branch=v10.x-binary --dept=1
 
 gmake -C limine
 mkdir -p arcroot
@@ -8,7 +8,7 @@ cp -v bin/aecore arcroot/boot/
 mkdir -p arcroot/boot/limine
 cp -v limine.conf limine/limine-bios.sys limine/limine-bios-cd.bin limine/limine-uefi-cd.bin arcroot/boot/limine/
 
-mkdir -p arcroot/EFI/BOOT 
+mkdir -p arcroot/EFI/BOOT
 cp -v limine/BOOTX64.EFI arcroot/EFI/BOOT/
 cp -v limine/BOOTIA32.EFI arcroot/EFI/BOOT/
 
