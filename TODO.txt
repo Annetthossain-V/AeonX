@@ -1,0 +1,11 @@
+High priority:
+* make printf
+
+Medium priority:
+* Make kernel use it's own stack
+
+
+Low priority:
+* make malloc
+* make idt
+* make gdt
