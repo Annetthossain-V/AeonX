@@ -1,6 +1,6 @@
 .suffix:
 
-override OUTPUT := arckrn
+override OUTPUT := aecore
 
 # using llvm toolchain
 CC := clang
@@ -42,7 +42,8 @@ override CPPFLAGS = \
 		-I src \
 		-DLIMINE_API_REVISION=3 \
 		-MMD \
-		-MP
+		-MP \
+		-I limine
 
 override NASMFLAGS := \
 		-f elf64 \

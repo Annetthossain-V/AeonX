@@ -4,7 +4,7 @@ gmake -C limine
 mkdir -p arcroot
 
 mkdir -p arcroot/boot
-cp -v bin/arckrn arcroot/boot/
+cp -v bin/aecore arcroot/boot/
 mkdir -p arcroot/boot/limine
 cp -v limine.conf limine/limine-bios.sys limine/limine-bios-cd.bin limine/limine-uefi-cd.bin arcroot/boot/limine/
 
