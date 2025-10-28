@@ -5,13 +5,8 @@
 #include "kernel.h"
 #include "../asm/x86_64.h"
 
-#define MAX_CPUS 1
-#define KERNEL_STACK_SIZE 0x4000
 
-// uint8_t kernel_stacks[MAX_CPUS][KERNEL_STACK_SIZE] __attribute__((aligned(16)));
-
-
-// __attribute__((used, section(".limine_requests")))
+__attribute__((used, section(".limine_requests")))
 static volatile LIMINE_BASE_REVISION(4);
 
 __attribute__((used, section(".limine_requests")))
@@ -42,10 +37,7 @@ static volatile LIMINE_REQUESTS_END_MARKER;
 
 
 void _start(void) {
-  /* uint64_t* stack_top = (uint64_t*)(kernel_stacks[0] + KERNEL_STACK_SIZE);
-  asm volatile("mov %0, %%rsp" :: "r"(stack_top));
-  asm volatile("mov %0, %%rbp" :: "r"(stack_top)); */
-
+  
   if (LIMINE_BASE_REVISION_SUPPORTED == false)
     halt();
 
