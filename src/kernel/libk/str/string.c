@@ -71,3 +71,24 @@ int strcmp(const char* s1, const char* s2) {
   else
     return s1[i] - s2[i];
 }
+
+char* strchr(const char* s, int c) {
+  while(*s != '\0') {
+    if (*s == c) return s;
+    s++;
+  }
+  return NULL;
+}
+
+char* strcpy(char* dest, const char* src) {
+  char* _dest = dest;
+  unsigned long src_len = strlen(src);
+
+  for (unsigned long i = 0; i < src_len; i++) {
+    dest[i] = src[i];
+  }
+  dest[src_len] = '\0';
+
+  return _dest;
+}
+
