@@ -1,8 +1,10 @@
 High priority:
 * make printf
 
+
 Medium priority:
-* Make kernel use it's own stack
+* make support for c++ 
+* Make kernel use it's own stack (done)
 
 
 Low priority:
