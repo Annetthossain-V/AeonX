@@ -36,13 +36,10 @@ __attribute__((used, section(".limine_requests_end")))
 static volatile LIMINE_REQUESTS_END_MARKER;
 
 void _start_c(void) {
-  
   if (LIMINE_BASE_REVISION_SUPPORTED == false)
     halt();
-
   if (framebuffer_request.response == NULL || framebuffer_request.response->framebuffer_count < 1)
     halt();
-
   if (memmap_request.response == NULL)
     halt();
 
