@@ -4,26 +4,27 @@ override OUTPUT := aecore
 
 # using llvm toolchain
 CC := clang
+CXX := clang++
 LD := ld.lld
 
 # controllable C Flags
-CFLAGS := -O2 -pipe -Wno-unused-parameter
-CPPFLAGS :=
+CFLAGS := -O0 -pipe -Wno-unused-parameter -flto
+CXXFLAGS := -O0 -pipe -flto
+CPPFLAGS := -Isrc/kernel/libc/
 NASMFLAGS :=
 LDFLAGS := -O2
 
-# C target
+# target
 override CC += -target x86_64-unknown-none-elf
+override CXX += -target x86_64-unknown-none-elf
 
 # internal C flags that should not change
-override CFLAGS += \
-		-Wall \
+compiler := -Wall \
 		-Wextra	\
-		-std=gnu11 \
 		-ffreestanding \
 		-fno-stack-protector \
 		-fno-stack-check \
-		-fno-lto \
+		# -fno-lto \
 		-fno-PIC \
 		-ffunction-sections \
 		-fdata-sections \
@@ -37,8 +38,18 @@ override CFLAGS += \
 		-mno-red-zone \
 		-mcmodel=kernel
 
-# internal C preprocessor flags that should be changed 
-override CPPFLAGS = \
+override CFLAGS += \
+				$(compiler) \
+				-std=gnu11
+
+override CXXFLAGS += \
+				$(compiler) \
+				-fno-exceptions \
+				-std=gnu++11 \
+				-fno-rtti
+
+# internal C preprocessor flags that should not be changed
+override CPPFLAGS += \
 		-I src \
 		-DLIMINE_API_REVISION=3 \
 		-MMD \
@@ -59,10 +70,11 @@ override LDFLAGS += \
 
 override SRCFILES := $(shell find -L src -type f 2>/dev/null | LC_ALL=C sort)
 override CFILES := $(filter %.c,$(SRCFILES))
+override CXXFILES := $(filter %.cxx,$(SRCFILES))
 override ASFILES := $(filter %.S,$(SRCFILES))
 override NASMFILES := $(filter %.asm,$(SRCFILES))
-override OBJ = $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o))
-override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d))
+override OBJ = $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o) $(CXXFILES:.cxx=.cxx.o))
+override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d) $(CXXFILES:.cxx=.cxx.d))
 
 .PHONY: all
 all: bin/$(OUTPUT)
@@ -76,6 +88,10 @@ bin/$(OUTPUT): GNUmakefile linker.lds $(OBJ)
 obj/%.c.o: %.c GNUmakefile
 		mkdir -p "$(dir $@)"
 		$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+
+obj/%.cxx.o: %.cxx GNUmakefile
+		mkdir -p "$(dir $@)"
+		$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 obj/%.S.o: %.S GNUmakefile
 		mkdir -p "$(dir $@)"
