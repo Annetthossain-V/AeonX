@@ -11,3 +11,6 @@ Low priority:
 * make malloc
 * make idt
 * make gdt
+
+Far Future:
+* add multi cpu-core support 
