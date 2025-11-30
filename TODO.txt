@@ -3,7 +3,7 @@ High priority:
 
 
 Medium priority:
-* make support for c++ 
+* make support for c++ (done)
 * Make kernel use it's own stack (done)
 
 

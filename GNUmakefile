@@ -10,7 +10,7 @@ LD := ld.lld
 # controllable C Flags
 CFLAGS := -O0 -pipe -Wno-unused-parameter -flto
 CXXFLAGS := -O0 -pipe -flto
-CPPFLAGS := -Isrc/kernel/libc/
+CPPFLAGS := -Isrc/kernel/libkrn/
 NASMFLAGS :=
 LDFLAGS := -O2
 

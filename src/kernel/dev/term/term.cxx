@@ -3,11 +3,15 @@
 #include <string.h>
 #include <type.h>
 
-static struct limine_framebuffer_request* global_scrn = NULL;
+static volatile struct limine_framebuffer_request* global_scrn = NULL;
 
 extern "C" BOOL term::init_terminal_screen(volatile struct limine_framebuffer_request* frame_buffer) {
   if (frame_buffer == NULL)
     return FALSE;
+
+  global_scrn = frame_buffer;
+
+  // TODO: clear the screen
 
   return TRUE;
 }
