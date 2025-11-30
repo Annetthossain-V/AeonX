@@ -11,6 +11,5 @@ global _start
 _start:
   lea rsp, [rel kstack_top]
   mov rbp, rsp
-  jmp _start_c
-  hlt
-
+  call _start_c
+  jmp _start

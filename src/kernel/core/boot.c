@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include <limine.h>
 #include "kernel.h"
-#include "../asm/x86_64.h"
 
 
 __attribute__((used, section(".limine_requests")))
@@ -36,12 +35,18 @@ __attribute__((used, section(".limine_requests_end")))
 static volatile LIMINE_REQUESTS_END_MARKER;
 
 void _start_c(void) {
-  if (LIMINE_BASE_REVISION_SUPPORTED == false)
-    halt();
-  if (framebuffer_request.response == NULL || framebuffer_request.response->framebuffer_count < 1)
-    halt();
-  if (memmap_request.response == NULL)
-    halt();
+  if (LIMINE_BASE_REVISION_SUPPORTED == false) {
+    __asm__("hlt");
+    __asm__("jmp .");
+  }
+  if (framebuffer_request.response == NULL || framebuffer_request.response->framebuffer_count < 1) {
+    __asm__("hlt");
+    __asm__("jmp .");
+  }
+  if (memmap_request.response == NULL) {
+    __asm__("hlt");
+    __asm__("jmp .");
+  }
 
   _main(&framebuffer_request, &memmap_request);
 }
