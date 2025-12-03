@@ -1,7 +1,8 @@
 #include <stdint.h>
 #include "string.h"
 
-void* memcpy(void* /*restrict*/ dest, const void* /*restrict*/ src, size_t n) {
+void* memcpy(void* /*restrict*/ dest, const void* /*restrict*/ src, size_t n) 
+{
   uint8_t* restrict pdest = (uint8_t* restrict)dest;
   const uint8_t* restrict psrc = (const uint8_t* restrict)src;
 
@@ -12,7 +13,8 @@ void* memcpy(void* /*restrict*/ dest, const void* /*restrict*/ src, size_t n) {
   return dest;
 }
 
-void* memset(void* s, int c, size_t n) {
+void* memset(void* s, int c, size_t n) 
+{
   uint8_t* p = (uint8_t*)s;
   for (size_t i = 0; i < n; i++) {
     p[i] = (uint8_t)c;
@@ -21,7 +23,8 @@ void* memset(void* s, int c, size_t n) {
   return s;
 }
 
-void* memmove(void* dest, const void* src, size_t n) {
+void* memmove(void* dest, const void* src, size_t n) 
+{
   uint8_t* pdest = (uint8_t*)dest;
   const uint8_t* psrc = (const uint8_t*)src;
 
@@ -38,7 +41,8 @@ void* memmove(void* dest, const void* src, size_t n) {
   return dest;
 }
 
-int memcmp(const void* s1, const void* s2, size_t n) {
+int memcmp(const void* s1, const void* s2, size_t n) 
+{
   const uint8_t* p1 = (const uint8_t*)s1;
   const uint8_t* p2 = (const uint8_t*)s2;
 
@@ -51,7 +55,8 @@ int memcmp(const void* s1, const void* s2, size_t n) {
   return 0;
 }
 
-unsigned long strlen(const char* s) {
+unsigned long strlen(const char* s) 
+{
   unsigned long len = 0;
   while (s[len] != '\0') {
     len++;
@@ -59,7 +64,8 @@ unsigned long strlen(const char* s) {
   return len;
 }
 
-int strcmp(const char* s1, const char* s2) {
+int strcmp(const char* s1, const char* s2) 
+{
   int i = 0;
   while (s1[i] == s2[i]) {
     if (s1[i] == '\0' || s2[i] == '\0') break;
@@ -72,7 +78,8 @@ int strcmp(const char* s1, const char* s2) {
     return s1[i] - s2[i];
 }
 
-char* strchr(const char* s, int c) {
+char* strchr(const char* s, int c) 
+{
   while(*s != '\0') {
     if (*s == c) return s;
     s++;
@@ -80,7 +87,8 @@ char* strchr(const char* s, int c) {
   return NULL;
 }
 
-char* strcpy(char* dest, const char* src) {
+char* strcpy(char* dest, const char* src) 
+{
   char* _dest = dest;
   unsigned long src_len = strlen(src);
 
