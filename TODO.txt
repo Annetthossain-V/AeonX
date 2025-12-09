@@ -1,6 +1,7 @@
 High priority:
 * make printf
-
+* make makefile support for both gcc and clang
+* use gcc to compile
 
 Medium priority:
 * make support for c++ (done)
