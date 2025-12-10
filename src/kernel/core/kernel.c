@@ -1,13 +1,13 @@
 #include <limine.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "../dev/term/term.h"
+#include <dev/scrn/scrn.h>
 #include "kernel.h"
 
 
-void _main(volatile struct limine_framebuffer_request* framebuffer_req, volatile struct limine_memmap_request* memmap_req) 
+void _main(volatile struct limine_framebuffer_request* framebuffer_req, volatile struct limine_memmap_request* memmap_req)
 {
-  if (!init_terminal_screen(framebuffer_req)) {
+  if (!screen_init(framebuffer_req)) {
     __asm__("hlt");
     __asm__("jmp .");
   }

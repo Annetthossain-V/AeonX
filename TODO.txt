@@ -1,17 +1,14 @@
 High priority:
-* make printf
-* make makefile support for both gcc and clang
-* use gcc to compile
+* add gcc build support
 
 Medium priority:
-* make support for c++ (done)
-* Make kernel use it's own stack (done)
-
+* make printf
+* make malloc
 
 Low priority:
-* make malloc
 * make idt
 * make gdt
 
 Far Future:
-* add multi cpu-core support 
+* add sse support
+* add multi cpu-core support
