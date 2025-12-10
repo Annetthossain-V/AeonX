@@ -1,5 +1,5 @@
 High priority:
-* add gcc build support
+* make gdt
 
 Medium priority:
 * make printf
@@ -7,8 +7,8 @@ Medium priority:
 
 Low priority:
 * make idt
-* make gdt
 
 Far Future:
 * add sse support
 * add multi cpu-core support
+* add gcc build support

@@ -5,5 +5,5 @@ extern "C" volatile struct limine_framebuffer_request* scrn::SCREEN_FRAME_REQUES
 
 extern "C" BOOL scrn::save_screen_request(volatile struct limine_framebuffer_request* screen_frame_request)
 {
-  return FALSE;
+  return true;
 }
