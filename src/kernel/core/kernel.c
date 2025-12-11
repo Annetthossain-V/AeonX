@@ -10,12 +10,7 @@ void _main(volatile struct limine_framebuffer_request* framebuffer_req, volatile
 {
   if (!screen_init(framebuffer_req)) hcf();
 
-  // debug draw
-  struct limine_framebuffer* framebuff = framebuffer_req->response->framebuffers[0];
-  for (size_t i = 0; i < 500; i++) {
-    volatile uint32_t* fp_ptr = framebuff->address;
-    fp_ptr[i * (framebuff->pitch / 4) + i] = 0xffffff;
-  }
+
 
   hcf();
 }

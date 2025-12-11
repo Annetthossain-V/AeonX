@@ -3,6 +3,60 @@
 #include <limine.h>
 #include <string.h>
 #include <type.h>
+#include <core/kern64.h>
+
+
+extern "C" void pixel(int64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b)
+{
+  volatile struct limine_framebuffer* fp = scrn::get_screen();
+  if (fp != nullptr) scrn::Pixel(fp, x, y, r, g, b);
+}
+
+// puts safety over performance
+extern "C" void Pixel(volatile struct limine_framebuffer* fb, uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b)
+{
+  if (!fb || x >= fb->width || y >= fb->height) return;
+
+  uint8_t bytes_per_pixel = fb->bpp / 8;
+  uint8_t* row = (uint8_t*)fb->address + y * fb->pitch;
+  uint8_t* p = row + x * bytes_per_pixel;
+
+  uint32_t color = 0;
+  if (fb->red_mask_size) color |= ((uint32_t)r >> (8 - fb->red_mask_size)) << fb->red_mask_shift;
+  if (fb->green_mask_size) color |= ((uint32_t)g >> (8 - fb->green_mask_size)) << fb->green_mask_shift;
+  if (fb->blue_mask_size) color |= ((uint32_t)b >> (8 - fb->blue_mask_size)) << fb->blue_mask_shift;
+
+  switch (bytes_per_pixel)
+  {
+    case 4:
+      *(volatile uint32_t*)p = color;
+      break;
+    case 3: // little endian
+      p[0] = color & 0xFF;
+      p[1] = (color >> 8) & 0xFF;
+      p[2] = (color >> 16) & 0xFF;
+      break;
+    case 2:
+      *(volatile uint16_t*)p = (uint16_t)(color & 0xFFFF);
+      break;
+    default:
+      for (unsigned i = 0; i < bytes_per_pixel; ++i) p[i] = (color >> (8 * i)) & 0xFF;
+      break;
+  }
+}
+
+extern "C" void scrn::clear_screen()
+{
+  volatile auto* screen = scrn::get_screen();
+  if (screen != nullptr)
+  {
+    for (auto y = 0; y < screen->height; ++y) {
+      for (auto x = 0; x < screen->width; ++x) {
+        Pixel(screen, x, y, 8, 7, 18);
+      }
+    }
+  }
+}
 
 extern "C" BOOL scrn::screen_init(volatile struct limine_framebuffer_request* frame_buffer) {
   if (frame_buffer == NULL) return FALSE;
@@ -10,7 +64,7 @@ extern "C" BOOL scrn::screen_init(volatile struct limine_framebuffer_request* fr
   // save screen buffer
   if (!scrn::save_screen_request(frame_buffer)) return FALSE;
 
-
+  scrn::clear_screen();
 
   return TRUE;
 }

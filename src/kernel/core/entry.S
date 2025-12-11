@@ -30,4 +30,4 @@ _start:
 
   call _start_c
   hlt
-.jmp_hlt: jmp .jmp_hlt
+  jmp hcf
