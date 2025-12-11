@@ -4,12 +4,7 @@
 extern "C" {
 #endif
 
-static inline void hcf()
-{
-  __asm__("cli");
-  __asm__("hlt");
-  __asm__("jmp .");
-}
+void hcf();
 
 #ifdef __cplusplus
 }

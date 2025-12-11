@@ -8,7 +8,7 @@ extern "C" BOOL scrn::screen_init(volatile struct limine_framebuffer_request* fr
   if (frame_buffer == NULL) return FALSE;
 
   // save screen buffer
-  if (scrn::save_screen_request(frame_buffer) != TRUE) return FALSE;
+  if (!scrn::save_screen_request(frame_buffer)) return FALSE;
 
 
 

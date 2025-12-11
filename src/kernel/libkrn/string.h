@@ -17,7 +17,7 @@ int memcmp(const void* s1, const void* s2, size_t n);
 
 unsigned long strlen(const char* s);
 int strcmp(const char* s1, const char* s2);
-char* strchr(const char* s, int c);
+const char* strchr(const char* s, int c);
 char* strcpy(char* dest, const char* src);
 
 #ifdef __cplusplus
