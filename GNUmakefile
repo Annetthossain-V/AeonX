@@ -8,8 +8,8 @@ CXX := clang++
 LD := ld.lld
 
 # controllable C Flags
-CFLAGS := -O0 -pipe -Wno-unused-parameter -flto
-CXXFLAGS := -O0 -pipe -flto
+CFLAGS := -O0 -pipe -Wno-unused-parameter -flto -msse4.2
+CXXFLAGS := -O0 -pipe -flto -msse4.2
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
 NASMFLAGS :=
 LDFLAGS := -O2
@@ -19,12 +19,12 @@ override CC += -target x86_64-unknown-none-elf
 override CXX += -target x86_64-unknown-none-elf
 
 # internal C flags that should not change
+# fno-lto -mno-sse
 compiler := -Wall \
 		-Wextra	\
 		-ffreestanding \
 		-fno-stack-protector \
 		-fno-stack-check \
-		# -fno-lto \
 		-fno-PIC \
 		-ffunction-sections \
 		-fdata-sections \
@@ -33,8 +33,6 @@ compiler := -Wall \
 		-mabi=sysv \
 		-mno-80387 \
 		-mno-mmx \
-		-mno-sse \
-		-mno-sse2 \
 		-mno-red-zone \
 		-mcmodel=kernel
 

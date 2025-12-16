@@ -3,7 +3,7 @@
 .section .bss
 .align 16
 kstack_bottom:
-  .skip 16384 * 512
+  .skip (16384 * 512 * 4) * 2 # 64 MiB
 kstack_top:
 
 .section .text
@@ -13,21 +13,34 @@ _start:
   lea rsp, kstack_top[rip]
   mov rbp, rsp
 
+  call __enable_sse
   xor rax, rax
-  xor rbx, rbx
-  xor rcx, rcx
-  xor rdx, rdx
-  xor rsi, rsi
-  xor rdi, rdi
-  xor r8, r8
-  xor r9, r9
-  xor r10, r10
-  xor r11, r11
-  xor r12, r12
-  xor r13, r13
-  xor r14, r14
-  xor r15, r15
 
-  call _start_c
+  call start_c
   hlt
   jmp hcf
+
+__enable_sse:
+  push rbp
+  mov rbp, rsp
+
+  mov eax, 0x1
+  cpuid
+  test edx, 1<<25
+  jz hcf # sse support not found
+
+  mov rax, cr0
+  and ax, 0xFFFB # clear coprocessor emulation CR0.EM
+  or ax, 0x2 # set coprocessor monitoring CR0.MP
+
+  mov cr0, rax
+  mov rax, cr4
+
+  or ax, 3 << 9 # set CR4.OSFXSR and CR4.OSXMMEXCPT at the same time
+  mov cr4, rax
+
+  pxor xmm0, xmm0
+  pxor xmm1, xmm1
+  nop
+  pop rbp
+  ret
