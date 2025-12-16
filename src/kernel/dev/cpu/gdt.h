@@ -6,7 +6,7 @@ namespace cpu {
 extern "C" {
 #endif
 
-bool set_gdt();
+void set_gdt(void);
 
 #ifdef __cplusplus
 } }

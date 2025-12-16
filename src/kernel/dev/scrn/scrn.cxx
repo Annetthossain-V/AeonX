@@ -45,7 +45,7 @@ extern "C" void Pixel(volatile struct limine_framebuffer* fb, uint64_t x, uint64
   }
 }
 
-extern "C" void scrn::clear_screen()
+extern "C" void scrn::clear_screen(void)
 {
   volatile auto* screen = scrn::get_screen();
   if (screen != nullptr)

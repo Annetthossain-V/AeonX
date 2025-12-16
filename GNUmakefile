@@ -12,7 +12,7 @@ CFLAGS := -O0 -pipe -Wno-unused-parameter -flto -msse4.2
 CXXFLAGS := -O0 -pipe -flto -msse4.2
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
 NASMFLAGS :=
-LDFLAGS := -O2
+LDFLAGS := -O2 
 
 # target
 override CC += -target x86_64-unknown-none-elf
