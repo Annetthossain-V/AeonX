@@ -1,7 +1,7 @@
 #include <dev/cpu/gdt.h>
 #include <stdint.h>
 
-#define NUM_GDT_ENTRIES 5
+#define NUM_GDT_ENTRIES 7
 
 static uint64_t gdt_entries[NUM_GDT_ENTRIES];
 
@@ -15,6 +15,10 @@ static struct GDTR gdtr = {
   .base = (uint64_t)gdt_entries,
 };
 
+struct __attribute__((packed)) tss64 {
+  uint32_t reserved0;
+};
+
 static inline uint64_t make_gdt_entry(uint8_t access, uint8_t flags)
 {
   // base = 0, limit = 0 for 64-bit flat segments;
@@ -22,7 +26,12 @@ static inline uint64_t make_gdt_entry(uint8_t access, uint8_t flags)
   return ((uint64_t)access << 40) | ((uint64_t)flags << 52);
 }
 
-void cpu::set_gdt(void)
+static void set_tss(void)
+{
+
+}
+
+void set_gdt(void)
 {
   // null descriptor
   gdt_entries[0] = 0;
@@ -41,6 +50,8 @@ void cpu::set_gdt(void)
   gdt_entries[2] = make_gdt_entry(KDATA_ACC, DATA_FLAGS);
   gdt_entries[3] = make_gdt_entry(UCODE_ACC, CODE_FLAGS);
   gdt_entries[4] = make_gdt_entry(UDATA_ACC, DATA_FLAGS);
+
+  set_tss();
 
   asm volatile
   (
