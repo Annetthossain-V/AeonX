@@ -17,13 +17,49 @@ static struct GDTR gdtr = {
 
 struct __attribute__((packed)) tss64 {
   uint32_t reserved0;
+  uint64_t rsp0;
+  uint64_t rsp1;
+  uint64_t rsp2;
+  uint64_t reserved1;
+  uint64_t ist1;
+  uint64_t ist2;
+  uint64_t ist3;
+  uint64_t ist4;
+  uint64_t ist5;
+  uint64_t ist6;
+  uint64_t ist7;
+  uint64_t reserved2;
+  uint16_t reserved3;
+  uint16_t iomap_base; // offset to IO bitmap; set to sizof(tss) to disable
 };
+
+static struct tss64 tss __attribute__((aligned(16)));
+
+static uint8_t df_stack[8192] __attribute__((aligned(16)));
+static uint8_t irq_stack[4096] __attribute__((aligned(16)));
 
 static inline uint64_t make_gdt_entry(uint8_t access, uint8_t flags)
 {
   // base = 0, limit = 0 for 64-bit flat segments;
   // place access at bits 40..47, flags at bits 52..55
   return ((uint64_t)access << 40) | ((uint64_t)flags << 52);
+}
+
+static void make_tss_descriptor(uint64_t* gdt, int index, void* tss_ptr, uint32_t tss_size)
+{
+  uint64_t base = (uint64_t)tss_ptr;
+  uint32_t limit = tss_size - 1;
+
+  // Access byte: 0x89 = P=1, DPL=0, S=0 (system), Type=0x9 (available 64-bit TSS)
+  const uint8_t access = 0x89;
+
+  // Flags nibble: (G << 3) | (DB << 2) | (L << 1) | AVL 
+  // For TSS: G=0, DB=0, L=0, AVL=0 (so flags = 0)
+  const uint8_t flags = 0x0;
+
+  // conpose low 8 bytes
+  uint64_t low = 0;
+  low |= (uint64_t)(limit & 0xFFFF); // limit[15:0]
 }
 
 static void set_tss(void)

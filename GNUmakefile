@@ -66,7 +66,7 @@ override LDFLAGS += \
 		--gc-sections \
 		-T linker.lds
 
-override SRCFILES := $(shell find -L src -type f 2>/dev/null | LC_ALL=C sort)
+override SRCFILES := $(shell find -L src/kernel -type f 2>/dev/null | LC_ALL=C sort)
 override CFILES := $(filter %.c,$(SRCFILES))
 override CXXFILES := $(filter %.cxx,$(SRCFILES))
 override ASFILES := $(filter %.S,$(SRCFILES))
