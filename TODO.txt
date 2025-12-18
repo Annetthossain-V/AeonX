@@ -1,15 +1,14 @@
 High priority:
-* make gdt
+* make malloc
 
 Medium priority:
 * make printf
-* make malloc
 
 Low priority:
 * make idt
-* use multi buffer screen
+* add acpi
+* add timers
 
 Far Future:
-* add sse support
-* add multi cpu-core support
+* add multi core cpu support
 * add gcc build support

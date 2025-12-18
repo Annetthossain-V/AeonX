@@ -52,7 +52,7 @@ extern "C" void scrn::clear_screen(void)
   {
     for (volatile uint64_t y = 0; y < screen->height; ++y) {
       for (volatile uint64_t x = 0; x < screen->width; ++x) {
-        Pixel(screen, x, y, 8, 7, 18);
+        Pixel(screen, x, y, 64, 79, 82);
       }
     }
   }
