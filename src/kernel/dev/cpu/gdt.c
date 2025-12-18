@@ -1,5 +1,6 @@
 #include <dev/cpu/gdt.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #define NUM_GDT_ENTRIES 7
 
@@ -60,11 +61,53 @@ static void make_tss_descriptor(uint64_t* gdt, int index, void* tss_ptr, uint32_
   // conpose low 8 bytes
   uint64_t low = 0;
   low |= (uint64_t)(limit & 0xFFFF); // limit[15:0]
+  low |= (uint64_t)(base & 0xFFFFFF) << 16; // base[23:0] -> bits 16..39
+  low |= (uint64_t)access << 40; // access byte -> bits 48..47
+  low |= (uint64_t)((limit >> 16) & 0xF) << 48; // limit[19:16] -> bits 40..51 
+  low |= (uint64_t)(flags & 0xF) << 52; // flags nibble -> bits 52..55
+  low |= (uint64_t)((base >> 24) & 0xFF) << 56; // base[31:24] -? bits 56..63
+  
+  uint64_t high = 0;
+  high |= (uint64_t)((base >> 32) & 0xFFFFFFFF);
+
+  gdt[index] = low;
+  gdt[index + 1] = high;
 }
 
-static void set_tss(void)
+void set_tss(void)
 {
+  for (size_t i = 0; i < sizeof(tss); ++i)
+    ((uint8_t*)&tss)[i] = 0;
 
+  extern uint8_t kstack_top;
+  tss.rsp0 = (uint64_t)kstack_top;
+
+  tss.ist1 = (uint64_t)(df_stack + sizeof(df_stack)); // IST1 -> double-fault stack
+  tss.ist2 = (uint64_t)(irq_stack + sizeof(irq_stack)); // IST2 -> example IRQ stack
+  
+  tss.iomap_base = sizeof(tss);
+
+  const int tss_gdt_index = 5;
+  make_tss_descriptor(gdt_entries, tss_gdt_index, &tss, sizeof(tss));
+
+  // shouldn't be needed
+  gdtr.limit = sizeof(gdt_entries) - 1;
+  gdtr.base = (uint64_t)gdt_entries;
+
+  asm volatile ("lgdt %0 \n" :: "m"(gdtr) : "memory");
+
+  uint16_t tss_selector = (uint16_t)(tss_gdt_index << 3);
+
+  asm volatile 
+  (
+    "mov ax, %0 \n"
+    "ltr ax \n"
+    : // no outputs
+    : "r"(tss_selector)
+    : "ax", "memory"
+  );
+
+  return;
 }
 
 void set_gdt(void)
@@ -86,8 +129,6 @@ void set_gdt(void)
   gdt_entries[2] = make_gdt_entry(KDATA_ACC, DATA_FLAGS);
   gdt_entries[3] = make_gdt_entry(UCODE_ACC, CODE_FLAGS);
   gdt_entries[4] = make_gdt_entry(UDATA_ACC, DATA_FLAGS);
-
-  set_tss();
 
   asm volatile
   (

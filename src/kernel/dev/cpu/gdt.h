@@ -8,6 +8,8 @@ extern "C" {
 
 void set_gdt(void);
 
+void set_tss(void);
+
 #ifdef __cplusplus
 } }
 #endif

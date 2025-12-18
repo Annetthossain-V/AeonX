@@ -8,8 +8,8 @@ CXX := clang++
 LD := ld.lld
 
 # controllable C Flags
-CFLAGS := -O0 -pipe -Wno-unused-parameter -flto -msse4.2
-CXXFLAGS := -O0 -pipe -flto -msse4.2
+CFLAGS := -O0 -pipe -Wno-unused-parameter -flto -msse4.2 -march=native -mtune=native
+CXXFLAGS := -O0 -pipe -flto -msse4.2 -march=native -mtune=native
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
 NASMFLAGS :=
 LDFLAGS := -O2 

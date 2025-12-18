@@ -4,6 +4,7 @@
 .align 16
 kstack_bottom:
   .skip (16384 * 512 * 4) * 2 # 64 MiB
+.globl kstack_top
 kstack_top:
 
 .section .text
