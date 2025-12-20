@@ -17,6 +17,11 @@ _start:
   call __enable_sse
   xor rax, rax
 
+  # setup basic kernel gdt & tss
+  call set_gdt
+  call set_tss
+  xor rax, rax
+
   call start_c
   hlt
   jmp hcf
