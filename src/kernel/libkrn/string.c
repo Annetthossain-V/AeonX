@@ -99,3 +99,8 @@ char* strcpy(char* dest, const char* src)
 
   return _dest;
 }
+
+int atoi(const char *str) 
+{
+
+}
