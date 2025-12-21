@@ -4,8 +4,8 @@
 
 static volatile struct limine_memmap_request *limine_memmap_req = nullptr;
 
-static memory_base usable_memory_base[4096] __attribute__((aligned(16)));
-static uint32_t usable_memory_count = 0;
+memory_base __xqz_usable_memory_base[USABLE_MEMORY_SIZE] __attribute__((aligned(16)));
+uint32_t __xqz_usable_memory_count = 0;
 
 bool memory::init_memory(volatile struct limine_memmap_request *memmap_req)
 {
@@ -20,13 +20,12 @@ bool memory::init_memory(volatile struct limine_memmap_request *memmap_req)
   {
     if (memmap_req->response->entries[i]->type == LIMINE_MEMMAP_USABLE)
     {
-      usable_memory_base[usable_memory_count].base = memmap_req->response->entries[i]->base;
-      usable_memory_base[usable_memory_count].length = memmap_req->response->entries[i]->length;
-      ++usable_memory_count;
+      __xqz_usable_memory_base[__xqz_usable_memory_count].base = memmap_req->response->entries[i]->base;
+      __xqz_usable_memory_base[__xqz_usable_memory_count].length = memmap_req->response->entries[i]->length;
+      ++__xqz_usable_memory_count;
+      if (__xqz_usable_memory_count >= USABLE_MEMORY_SIZE - 1) break;
     }
   }
 
   return true;
 }
-
-volatile struct limine_memmap_request* memory::get_limine_memory_map() { return limine_memmap_req; }

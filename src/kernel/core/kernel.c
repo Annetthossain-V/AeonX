@@ -14,6 +14,11 @@ void _main(volatile struct limine_framebuffer_request* framebuffer_req, volatile
   if (!init_memory(memmap_req)) goto hang;
   if (!screen_init(framebuffer_req)) goto hang;
 
+  const char* msg = "\nHello, World\n";
+  for (unsigned i = 0; i < strlen(msg); ++i) {
+    outb(DEBUG_QEMU_PORT, msg[i]);
+  }
+
 hang:
   hcf();
 }
