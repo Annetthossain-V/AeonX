@@ -100,7 +100,48 @@ char* strcpy(char* dest, const char* src)
   return _dest;
 }
 
-int atoi(const char *str) 
+int atoi(char *str) 
 {
+  int acum = 0;
+  int factor = 1;
 
+  if (*str == '-') 
+  {
+    factor = -1;
+    str++;
+  }
+
+  while ((*str >= '0') && (*str <= '9'))
+  {
+    acum = acum * 10;
+    acum = acum + (*str - 48);
+    str++;
+  }
+  return (factor * acum);
+}
+
+char* itoa(char *buffer, int number) 
+{
+  int i = 0;
+  int sign = number;
+
+  if (number < 0) number = -number;
+
+  while (number > 0)
+  {
+    buffer[i++] = number % 10 + '0';
+    number /= 10;   
+  }
+
+  if (sign < 0) buffer[i++] = '-';
+  buffer[i] = '\0';
+
+  for (int j = 0, k = i - 1; j < k; k--)
+  {
+    char tmp = buffer[j];
+    buffer[j] = buffer[k];
+    buffer[k] = tmp;
+  }
+  
+  return buffer;
 }
