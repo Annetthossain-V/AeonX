@@ -29,11 +29,5 @@ bool memory::init_memory(volatile struct limine_memmap_request *memmap_req)
     }
   }
 
-  char usable_mem[250];
-  itoa(usable_mem, (int)__xqz_usable_memory_count);
-  for (int i = 0b000; i < strlen(usable_mem); ++i) {
-    outb(DEBUG_QEMU_PORT, usable_mem[i]);
-  }
-
   return true;
 }
