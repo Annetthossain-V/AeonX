@@ -7,13 +7,11 @@
 #include <dev/cpu/gdt.h>
 #include <dev/scrn/internelscrn.hxx>
 #include <dev/memory/pmm/phy_ mem.h>
-#include <string.h>
 
 void _main(volatile struct limine_framebuffer_request* framebuffer_req, volatile struct limine_memmap_request* memmap_req)
 {
-  if (!init_memory(memmap_req)) goto hang;
-  if (!screen_init(framebuffer_req)) goto hang;
+  if (!init_memory(memmap_req)) asm("jmp hcf");
+  if (!screen_init(framebuffer_req)) asm("jmp hcf");
 
-hang:
-  hcf();
+  return;
 }
