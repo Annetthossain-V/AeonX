@@ -4,8 +4,7 @@
 namespace type
 {
 
-class String
-{
+class String {
 public:
 
 private:
