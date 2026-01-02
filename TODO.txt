@@ -1,5 +1,6 @@
 High priority:
 * make malloc
+* replace c++ with zig
 
 Medium priority:
 * make printf
