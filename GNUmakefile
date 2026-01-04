@@ -4,10 +4,12 @@ override OUTPUT := aecore
 
 # using llvm toolchain
 CC := clang
+ZIG := zig
 LD := ld.lld
 
 # controllable C Flags
 CFLAGS := -O0 -pipe -flto -Wno-unused-parameter -msse4.2 -march=native -mtune=native
+ZIGFLAGS := build-obj -OReleaseSafe
 
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
 NASMFLAGS :=
@@ -39,6 +41,15 @@ override CFLAGS += \
 				$(compiler) \
 				-std=gnu11
 
+override ZIGFLAGS += \
+				-mcmodel=kernel \
+				-target x86_64-freestanding \
+				-mcpu baseline-avx-mmx+sse4_2 \
+				-mno-red-zone \
+				-fno-builtin \
+				-fno-stack-check \
+				-fno-stack-protector \
+				-flibllvm
 
 # internal C preprocessor flags that should not be changed
 override CPPFLAGS += \
@@ -64,8 +75,9 @@ override SRCFILES := $(shell find -L src/kernel -type f 2>/dev/null | LC_ALL=C s
 override CFILES := $(filter %.c,$(SRCFILES))
 override ASFILES := $(filter %.S,$(SRCFILES))
 override NASMFILES := $(filter %.asm,$(SRCFILES))
-override OBJ = $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o))
-	override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d) $(NASMFILES:.asm=.asm.d))
+override ZIGFILES := $(filter %.zig,$(SRCFILES))
+override OBJ = $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o) $(ZIGFILES:.zig=.zig.o))
+	override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d) $(NASMFILES:.asm=.asm.d) $(ZIGFILES:.zig=.zig.d))
 
 .PHONY: all
 all: bin/$(OUTPUT)
@@ -87,6 +99,10 @@ obj/%.S.o: %.S GNUmakefile
 obj/%.asm.o: %.asm GNUmakefile
 		mkdir -p "$(dir $@)"
 		nasm $(NASMFLAGS) $< -o $@
+
+obj/%.zig.o: %.zig GNUmakefile
+		mkdir -p "$(dir $@)"
+		$(ZIG) $(ZIGFLAGS) $< -femit-bin=$@
 
 .PHONY: clean
 clean:
