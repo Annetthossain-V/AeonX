@@ -4,15 +4,14 @@ override OUTPUT := aecore
 
 # using llvm toolchain
 CC := clang
-CXX := clang++
 LD := ld.lld
 
 # controllable C Flags
 CFLAGS := -O0 -pipe -flto -Wno-unused-parameter -msse4.2 -march=native -mtune=native
-CXXFLAGS := -O0 -pipe -flto -msse4.2 -march=native -mtune=native
+
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
 NASMFLAGS :=
-LDFLAGS := -O2 
+LDFLAGS := -O2
 
 # target
 override CC += -target x86_64-unknown-none-elf
@@ -40,11 +39,6 @@ override CFLAGS += \
 				$(compiler) \
 				-std=gnu11
 
-override CXXFLAGS += \
-				$(compiler) \
-				-fno-exceptions \
-				-std=gnu++11 \
-				-fno-rtti
 
 # internal C preprocessor flags that should not be changed
 override CPPFLAGS += \
@@ -68,11 +62,10 @@ override LDFLAGS += \
 
 override SRCFILES := $(shell find -L src/kernel -type f 2>/dev/null | LC_ALL=C sort)
 override CFILES := $(filter %.c,$(SRCFILES))
-override CXXFILES := $(filter %.cxx,$(SRCFILES))
 override ASFILES := $(filter %.S,$(SRCFILES))
 override NASMFILES := $(filter %.asm,$(SRCFILES))
-override OBJ = $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o) $(CXXFILES:.cxx=.cxx.o))
-	override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d) $(CXXFILES:.cxx=.cxx.d) $(NASMFILES:.asm=.asm.d))
+override OBJ = $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o))
+	override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d) $(NASMFILES:.asm=.asm.d))
 
 .PHONY: all
 all: bin/$(OUTPUT)
@@ -86,10 +79,6 @@ bin/$(OUTPUT): GNUmakefile linker.lds $(OBJ)
 obj/%.c.o: %.c GNUmakefile
 		mkdir -p "$(dir $@)"
 		$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
-
-obj/%.cxx.o: %.cxx GNUmakefile
-		mkdir -p "$(dir $@)"
-		$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 obj/%.S.o: %.S GNUmakefile
 		mkdir -p "$(dir $@)"

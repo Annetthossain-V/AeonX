@@ -11,15 +11,7 @@ struct memory_base {
   uint64_t length;
 } __attribute__((packed));
 
-#ifdef __cplusplus
-namespace memory {
-extern "C" {
-#endif
 
 bool init_memory(volatile struct limine_memmap_request* memmap_req);
 
 volatile void* get_memory_buffer(size_t* length);
-
-#ifdef __cplusplus
-} }
-#endif

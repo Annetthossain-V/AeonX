@@ -5,7 +5,7 @@
 #include "kernel.h"
 #include <core/kern64.h>
 #include <dev/cpu/gdt.h>
-#include <dev/scrn/internelscrn.hxx>
+#include <dev/scrn/internelscrn.h>
 #include <dev/memory/pmm/phy_ mem.h>
 
 void _main(volatile struct limine_framebuffer_request* framebuffer_req, volatile struct limine_memmap_request* memmap_req)

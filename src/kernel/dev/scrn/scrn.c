@@ -1,19 +1,20 @@
+#include <stddef.h>
 #include <dev/scrn/scrn.h>
-#include <dev/scrn/internelscrn.hxx>
+#include <dev/scrn/internelscrn.h>
 #include <limine.h>
 #include <string.h>
 #include <core/kern64.h>
 
 
-extern "C" void pixel(int64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b)
+void pixel(int64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b)
 {
-  volatile struct limine_framebuffer* fp = scrn::get_screen();
-  if (fp != nullptr) scrn::Pixel(fp, x, y, r, g, b);
+  volatile struct limine_framebuffer* fp = get_screen();
+  if (fp != NULL) Pixel(fp, x, y, r, g, b);
 }
 
 // puts safety over performance
 // TODO: make this faster
-extern "C" void Pixel(volatile struct limine_framebuffer* fb, uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b)
+void Pixel(volatile struct limine_framebuffer* fb, uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b)
 {
   if (!fb || x >= fb->width || y >= fb->height) return;
 
@@ -45,10 +46,10 @@ extern "C" void Pixel(volatile struct limine_framebuffer* fb, uint64_t x, uint64
   }
 }
 
-extern "C" void scrn::clear_screen(void)
+void clear_screen(void)
 {
-  volatile auto* screen = scrn::get_screen();
-  if (screen != nullptr)
+  volatile struct limine_framebuffer* screen = get_screen();
+  if (screen != NULL)
   {
     for (volatile uint64_t y = 0; y < screen->height; ++y) {
       for (volatile uint64_t x = 0; x < screen->width; ++x) {
@@ -58,13 +59,13 @@ extern "C" void scrn::clear_screen(void)
   }
 }
 
-extern "C" bool scrn::screen_init(volatile struct limine_framebuffer_request* frame_buffer) {
+bool screen_init(volatile struct limine_framebuffer_request* frame_buffer) {
   if (frame_buffer == NULL) return false;
 
   // save screen buffer
-  if (!scrn::save_screen_request(frame_buffer)) return false;
+  if (!save_screen_request(frame_buffer)) return false;
 
-  scrn::clear_screen();
+  clear_screen();
 
   return true;
 }

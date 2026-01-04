@@ -6,9 +6,6 @@
 #define NULL (void*)0
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 void* memcpy(void* /*restrict*/ dest, const void* /*restrict*/ src, size_t n);
 void* memset(void* s, int c, size_t n);
@@ -21,8 +18,4 @@ const char* strchr(const char* s, int c);
 char* strcpy(char* dest, const char* src);
 
 int atoi(char* str);
-char* itoa(char* buffer, int number); 
-
-#ifdef __cplusplus
-}
-#endif
+char* itoa(char* buffer, int number);
