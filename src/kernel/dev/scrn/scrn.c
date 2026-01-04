@@ -6,7 +6,7 @@
 #include <core/kern64.h>
 
 
-void pixel(int64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b)
+void pixel(uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b)
 {
   volatile struct limine_framebuffer* fp = get_screen();
   if (fp != NULL) Pixel(fp, x, y, r, g, b);

@@ -9,7 +9,7 @@ LD := ld.lld
 
 # controllable C Flags
 CFLAGS := -O0 -pipe -flto -Wno-unused-parameter -msse4.2 -march=native -mtune=native
-ZIGFLAGS := build-obj -OReleaseSafe
+ZIGFLAGS := build-obj -OReleaseSafe -Isrc/kernel/ -Isrc/kernel/libkrn/
 
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
 NASMFLAGS :=
