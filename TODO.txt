@@ -1,6 +1,5 @@
 High priority:
 * make malloc
-* redesign dev/memory
 
 Medium priority:
 * make printf
