@@ -15,4 +15,16 @@ hcf:
   jmp hcf
   ret
 
+.section .text
+.globl _soft_kernel_reboot
+_soft_kernel_reboot:
+  mov rcx, 67108864
+  lea rdi, kstack_top - 67108864
+
+  cld
+  xor eax, eax
+  rep stosb
+
+  jmp _start
+  hlt
 
