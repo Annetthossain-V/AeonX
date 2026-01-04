@@ -7,3 +7,5 @@ void hcf();
 static inline void outb(unsigned short port, unsigned char byte) {
   __asm__ volatile ("out %1, %0" :: "a"(byte), "Nd"(port));
 }
+
+void _zmain();

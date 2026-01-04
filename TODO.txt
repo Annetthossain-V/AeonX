@@ -1,6 +1,6 @@
 High priority:
 * make malloc
-* replace c++ with zig
+* redesign dev/memory
 
 Medium priority:
 * make printf
