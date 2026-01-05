@@ -6,11 +6,11 @@
 #include <core/kern64.h>
 
 // TODO: reimplement this function in assembly
-void pixel(uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b)
-{
-  volatile struct limine_framebuffer* fp = get_screen();
-  Pixel(fp, x, y, r, g, b);
-}
+// void pixel(uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b)
+// {
+//   volatile struct limine_framebuffer* fp = get_screen();
+//   Pixel(fp, x, y, r, g, b);
+// }
 
 // puts safety over performance
 // TODO: make this faster
@@ -63,6 +63,5 @@ bool screen_init(volatile struct limine_framebuffer_request* frame_buffer) {
   if (!save_screen_request(frame_buffer)) return false;
 
   clear_screen();
-
   return true;
 }
