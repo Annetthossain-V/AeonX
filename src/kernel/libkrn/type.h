@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TYPE_H
+#define TYPE_H
 #include <stddef.h>
 #include <stdint.h>
 
@@ -47,4 +48,9 @@ typedef unsigned long long ull;
 typedef float f32;
 typedef double f64;
 
-#define _ANT_TYPE_ 1
+typedef uint64_t v2u64 __attribute__((vector_size(16)));
+typedef uint32_t v4u32 __attribute__((vector_size(16)));
+typedef uint16_t v8u16 __attribute__((vector_size(16)));
+typedef uint8_t v16u8 __attribute__((vector_size(16)));
+
+#endif // TYPE_H
