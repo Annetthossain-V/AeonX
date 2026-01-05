@@ -4,11 +4,12 @@ override OUTPUT := aecore
 
 # using llvm toolchain
 CC := clang
+AS := llvm-mc19
 LD := ld.lld
 
 # controllable C Flags
 CFLAGS := -O0 -pipe -flto -msse4.2 -march=native -mtune=native -finline-functions
-
+ASFLAGS := -filetype=obj -triple=x86_64-unknown-none --mcpu=corei7 --mattr=+sse,+sse2,+sse3,+sse4.2,-avx
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
 LDFLAGS := -O2
 
@@ -54,9 +55,9 @@ override LDFLAGS += \
 
 override SRCFILES := $(shell find -L src/kernel -type f 2>/dev/null | LC_ALL=C sort)
 override CFILES := $(filter %.c,$(SRCFILES))
-override ASFILES := $(filter %.S,$(SRCFILES))
-override OBJ = $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o))
-override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d))
+override ASFILES := $(filter %.s,$(SRCFILES))
+override OBJ = $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.s=.s.o))
+override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.s=.s.d))
 
 .PHONY: all
 all: bin/$(OUTPUT)
@@ -71,9 +72,9 @@ obj/%.c.o: %.c GNUmakefile
 		mkdir -p "$(dir $@)"
 		$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-obj/%.S.o: %.S GNUmakefile
+obj/%.s.o: %.s GNUmakefile
 		mkdir -p "$(dir $@)"
-		$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+		$(AS) $(ASFLAGS) $< -o $@
 
 .PHONY: clean
 clean:

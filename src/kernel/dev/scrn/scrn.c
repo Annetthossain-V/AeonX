@@ -5,11 +5,11 @@
 #include <string.h>
 #include <core/kern64.h>
 
-
+// TODO: reimplement this function in assembly
 void pixel(uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b)
 {
   volatile struct limine_framebuffer* fp = get_screen();
-  if (fp != NULL) Pixel(fp, x, y, r, g, b);
+  Pixel(fp, x, y, r, g, b);
 }
 
 // puts safety over performance
@@ -49,12 +49,9 @@ void Pixel(volatile struct limine_framebuffer* fb, uint64_t x, uint64_t y, uint8
 void clear_screen(void)
 {
   volatile struct limine_framebuffer* screen = get_screen();
-  if (screen != NULL)
-  {
-    for (volatile uint64_t y = 0; y < screen->height; ++y) {
-      for (volatile uint64_t x = 0; x < screen->width; ++x) {
-        Pixel(screen, x, y, 153, 153, 204);
-      }
+  for (volatile uint64_t y = 0; y < screen->height; ++y) {
+    for (volatile uint64_t x = 0; x < screen->width; ++x) {
+      Pixel(screen, x, y, 153, 153, 204);
     }
   }
 }
