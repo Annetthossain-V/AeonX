@@ -3,4 +3,6 @@
 /obj
 /arcroot
 /aeonx.iso
+/target
+/rootfs
 /src/**/*.pch

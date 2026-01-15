@@ -23,3 +23,14 @@ _soft_kernel_reboot:
 
   jmp _start
 
+.section .text
+.globl _main
+_main_asm:
+  # limine_framebuffer_request in rdi
+  # limine_memmap_request in rsi
+  subq $16, %rsp
+
+  # save args
+
+  addq $16, %rsp
+  ret

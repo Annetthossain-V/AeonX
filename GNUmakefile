@@ -4,12 +4,15 @@ override OUTPUT := aecore
 
 # using llvm toolchain
 CC := clang
-AS := llvm-mc19
+CXX := clang++
+AS := llvm-mc
 LD := ld.lld
 
 # controllable C Flags
-CFLAGS := -O0 -pipe -flto -msse4.2 -march=native -mtune=native -finline-functions
-ASFLAGS := -filetype=obj -triple=x86_64-unknown-none --mcpu=corei7 --mattr=+sse,+sse2,+sse3,+sse4.2,-avx
+CC_COMMON := -pipe -O2 -flto -msse4.2 -march=native -mtune=native -finline-functions
+CFLAGS := $(CC_COMMON) -std=gnu23
+CXXFLAGS := $(CC_COMMON) -std=gnu++23
+ASFLAGS := -filetype=obj -triple=x86_64-unknown-none --mattr=+sse,+sse2,+sse3,+sse4.2,-avx
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
 LDFLAGS := -O2
 
@@ -18,8 +21,7 @@ override CC += -target x86_64-unknown-none-elf
 override CXX += -target x86_64-unknown-none-elf
 
 # internal C flags that should not change
-# fno-lto -mno-sse
-override CFLAGS += \
+override COMPILER_FLAGS := \
 		-Wall \
 		-Wextra	\
 		-ffreestanding \
@@ -34,8 +36,16 @@ override CFLAGS += \
 		-mno-80387 \
 		-mno-mmx \
 		-mno-red-zone \
-		-std=gnu23 \
 		-mcmodel=kernel
+
+override CFLAGS += $(COMPILER_FLAGS)
+override CXXFLAGS += $(COMPILER_FLAGS) \
+		-fno-rtti \
+		-fno-exceptions \
+		-fno-unwind-tables \
+		-fno-asynchronous-unwind-tables \
+		-fno-threadsafe-statics \
+		-fno-use-cxa-atexit
 
 # internal C preprocessor flags that should not be changed
 override CPPFLAGS += \
@@ -56,26 +66,31 @@ override LDFLAGS += \
 override SRCFILES := $(shell find -L src/kernel -type f 2>/dev/null | LC_ALL=C sort)
 override CFILES := $(filter %.c,$(SRCFILES))
 override ASFILES := $(filter %.s,$(SRCFILES))
-override OBJ = $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.s=.s.o))
-override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.s=.s.d))
+override CXXFILES := $(filter %.cc,$(SRCFILES))
+override OBJ = $(addprefix target/obj/,$(CFILES:.c=.c.o) $(ASFILES:.s=.s.o) $(CXXFILES:.cc=.cc.o))
+override HEADER_DEPS := $(addprefix target/obj/,$(CFILES:.c=.c.d) $(ASFILES:.s=.s.d) $(CXXFILES:.cc=.cc.d))
 
 .PHONY: all
-all: bin/$(OUTPUT)
+all: target/bin/$(OUTPUT)
 
 -include $(HEADER_DEPS)
 
-bin/$(OUTPUT): GNUmakefile linker.lds $(OBJ)
+target/bin/$(OUTPUT): GNUmakefile linker.lds $(OBJ)
 		mkdir -p "$(dir $@)"
 		$(LD) $(LDFLAGS) $(OBJ) -o $@
 
-obj/%.c.o: %.c GNUmakefile
+target/obj/%.c.o: %.c GNUmakefile
 		mkdir -p "$(dir $@)"
 		$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-obj/%.s.o: %.s GNUmakefile
+target/obj/%.s.o: %.s GNUmakefile
 		mkdir -p "$(dir $@)"
 		$(AS) $(ASFLAGS) $< -o $@
 
+target/obj/%.cc.o: %.cc GNUmakefile
+		mkdir -p "$(dir $@)"
+		$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+
 .PHONY: clean
 clean:
-		rm -rf bin obj
+		rm -rf target aeonx.iso  # rootfs

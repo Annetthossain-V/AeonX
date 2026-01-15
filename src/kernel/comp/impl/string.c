@@ -1,10 +1,10 @@
 #include <stdint.h>
-#include "string.h"
+#include <string.h>
 
-void* memcpy(void* /*restrict*/ dest, const void* /*restrict*/ src, size_t n)
-{
-  uint8_t* restrict pdest = (uint8_t* restrict)dest;
-  const uint8_t* restrict psrc = (const uint8_t* restrict)src;
+void *memcpy(void * /*restrict*/ dest, const void * /*restrict*/ src,
+             size_t n) {
+  uint8_t *restrict pdest = (uint8_t *restrict)dest;
+  const uint8_t *restrict psrc = (const uint8_t *restrict)src;
 
   for (size_t i = 0; i < n; i++) {
     pdest[i] = psrc[i];
@@ -13,9 +13,8 @@ void* memcpy(void* /*restrict*/ dest, const void* /*restrict*/ src, size_t n)
   return dest;
 }
 
-void* memset(void* s, int c, size_t n)
-{
-  uint8_t* p = (uint8_t*)s;
+void *memset(void *s, int c, size_t n) {
+  uint8_t *p = (uint8_t *)s;
   for (size_t i = 0; i < n; i++) {
     p[i] = (uint8_t)c;
   }
@@ -23,10 +22,9 @@ void* memset(void* s, int c, size_t n)
   return s;
 }
 
-void* memmove(void* dest, const void* src, size_t n)
-{
-  uint8_t* pdest = (uint8_t*)dest;
-  const uint8_t* psrc = (const uint8_t*)src;
+void *memmove(void *dest, const void *src, size_t n) {
+  uint8_t *pdest = (uint8_t *)dest;
+  const uint8_t *psrc = (const uint8_t *)src;
 
   if (src > dest) {
     for (size_t i = 0; i < n; i++) {
@@ -34,17 +32,16 @@ void* memmove(void* dest, const void* src, size_t n)
     }
   } else if (src < dest) {
     for (size_t i = n; i > 0; i--) {
-      pdest[i-1] = psrc[i-1];
+      pdest[i - 1] = psrc[i - 1];
     }
   }
 
   return dest;
 }
 
-int memcmp(const void* s1, const void* s2, size_t n)
-{
-  const uint8_t* p1 = (const uint8_t*)s1;
-  const uint8_t* p2 = (const uint8_t*)s2;
+int memcmp(const void *s1, const void *s2, size_t n) {
+  const uint8_t *p1 = (const uint8_t *)s1;
+  const uint8_t *p2 = (const uint8_t *)s2;
 
   for (size_t i = 0; i < n; i++) {
     if (p1[i] != p2[i]) {
@@ -55,8 +52,7 @@ int memcmp(const void* s1, const void* s2, size_t n)
   return 0;
 }
 
-unsigned long strlen(const char* s)
-{
+unsigned long strlen(const char *s) {
   unsigned long len = 0;
   while (s[len] != '\0') {
     len++;
@@ -64,11 +60,11 @@ unsigned long strlen(const char* s)
   return len;
 }
 
-int strcmp(const char* s1, const char* s2)
-{
+int strcmp(const char *s1, const char *s2) {
   int i = 0;
   while (s1[i] == s2[i]) {
-    if (s1[i] == '\0' || s2[i] == '\0') break;
+    if (s1[i] == '\0' || s2[i] == '\0')
+      break;
     i++;
   }
 
@@ -78,18 +74,17 @@ int strcmp(const char* s1, const char* s2)
     return s1[i] - s2[i];
 }
 
-const char* strchr(const char* s, int c)
-{
-  while(*s != '\0') {
-    if (*s == c) return s;
+const char *strchr(const char *s, int c) {
+  while (*s != '\0') {
+    if (*s == c)
+      return s;
     s++;
   }
   return NULL;
 }
 
-char* strcpy(char* dest, const char* src)
-{
-  char* _dest = dest;
+char *strcpy(char *dest, const char *src) {
+  char *_dest = dest;
   unsigned long src_len = strlen(src);
 
   for (unsigned long i = 0; i < src_len; i++) {
@@ -100,19 +95,16 @@ char* strcpy(char* dest, const char* src)
   return _dest;
 }
 
-int atoi(char *str) 
-{
+int atoi(char *str) {
   int acum = 0;
   int factor = 1;
 
-  if (*str == '-') 
-  {
+  if (*str == '-') {
     factor = -1;
     str++;
   }
 
-  while ((*str >= '0') && (*str <= '9'))
-  {
+  while ((*str >= '0') && (*str <= '9')) {
     acum = acum * 10;
     acum = acum + (*str - 48);
     str++;
@@ -120,28 +112,27 @@ int atoi(char *str)
   return (factor * acum);
 }
 
-char* itoa(char *buffer, int number) 
-{
+char *itoa(char *buffer, int number) {
   int i = 0;
   int sign = number;
 
-  if (number < 0) number = -number;
+  if (number < 0)
+    number = -number;
 
-  while (number > 0)
-  {
+  while (number > 0) {
     buffer[i++] = number % 10 + '0';
-    number /= 10;   
+    number /= 10;
   }
 
-  if (sign < 0) buffer[i++] = '-';
+  if (sign < 0)
+    buffer[i++] = '-';
   buffer[i] = '\0';
 
-  for (int j = 0, k = i - 1; j < k; k--)
-  {
+  for (int j = 0, k = i - 1; j < k; k--) {
     char tmp = buffer[j];
     buffer[j] = buffer[k];
     buffer[k] = tmp;
   }
-  
+
   return buffer;
 }

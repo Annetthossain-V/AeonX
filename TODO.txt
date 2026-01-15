@@ -1,6 +1,6 @@
 High priority:
 * make malloc
-* switch to gcc
+* add c++ support to all header files
 
 Medium priority:
 * make printf
@@ -12,4 +12,4 @@ Low priority:
 
 Far Future:
 * add multi core cpu support
-* add clang build support
+* add gcc build support
