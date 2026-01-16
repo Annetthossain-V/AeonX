@@ -22,3 +22,4 @@ _soft_kernel_reboot:
   rep stosb
 
   jmp _start
+  

@@ -13,9 +13,9 @@ void _main(volatile struct limine_framebuffer_request *framebuffer_req,
            volatile struct limine_mp_request *mp_req) {
 
   if (init_memory(memmap_req) != 0)
-    asm("jmp hcf");
+    __asm__("jmp hcf");
   if (screen_init(framebuffer_req) != 0)
-    asm("jmp hcf");
+    __asm__("jmp hcf");
 
   return;
 }

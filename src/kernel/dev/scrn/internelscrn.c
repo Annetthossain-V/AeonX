@@ -4,7 +4,7 @@
 #include <stddef.h>
 
 // we're only gonna be using frame-buffer[0]
-volatile static struct limine_framebuffer_request *SCREEN_FRAME_REQUEST = NULL;
+static volatile struct limine_framebuffer_request *SCREEN_FRAME_REQUEST = NULL;
 
 int save_screen_request(
     volatile struct limine_framebuffer_request *screen_frame_request) {

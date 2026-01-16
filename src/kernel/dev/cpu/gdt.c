@@ -1,6 +1,6 @@
 #include <dev/cpu/gdt.h>
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #define NUM_GDT_ENTRIES 7
 
@@ -12,8 +12,8 @@ struct GDTR {
 } __attribute__((packed));
 
 static struct GDTR gdtr = {
-  .limit = sizeof(gdt_entries) - 1,
-  .base = (uint64_t)gdt_entries,
+    .limit = sizeof(gdt_entries) - 1,
+    .base = (uint64_t)gdt_entries,
 };
 
 struct __attribute__((packed)) tss64 {
@@ -39,34 +39,34 @@ static struct tss64 tss __attribute__((aligned(16)));
 static uint8_t df_stack[8192] __attribute__((aligned(16)));
 static uint8_t irq_stack[4096] __attribute__((aligned(16)));
 
-static inline uint64_t make_gdt_entry(uint8_t access, uint8_t flags)
-{
+static inline uint64_t make_gdt_entry(uint8_t access, uint8_t flags) {
   // base = 0, limit = 0 for 64-bit flat segments;
   // place access at bits 40..47, flags at bits 52..55
   return ((uint64_t)access << 40) | ((uint64_t)flags << 52);
 }
 
-static void make_tss_descriptor(uint64_t* gdt, int index, void* tss_ptr, uint32_t tss_size)
-{
+static void make_tss_descriptor(uint64_t *gdt, int index, void *tss_ptr,
+                                uint32_t tss_size) {
   uint64_t base = (uint64_t)tss_ptr;
   uint32_t limit = tss_size - 1;
 
-  // Access byte: 0x89 = P=1, DPL=0, S=0 (system), Type=0x9 (available 64-bit TSS)
+  // Access byte: 0x89 = P=1, DPL=0, S=0 (system), Type=0x9 (available 64-bit
+  // TSS)
   const uint8_t access = 0x89;
 
-  // Flags nibble: (G << 3) | (DB << 2) | (L << 1) | AVL 
+  // Flags nibble: (G << 3) | (DB << 2) | (L << 1) | AVL
   // For TSS: G=0, DB=0, L=0, AVL=0 (so flags = 0)
   const uint8_t flags = 0x0;
 
   // conpose low 8 bytes
   uint64_t low = 0;
-  low |= (uint64_t)(limit & 0xFFFF); // limit[15:0]
-  low |= (uint64_t)(base & 0xFFFFFF) << 16; // base[23:0] -> bits 16..39
-  low |= (uint64_t)access << 40; // access byte -> bits 48..47
-  low |= (uint64_t)((limit >> 16) & 0xF) << 48; // limit[19:16] -> bits 40..51 
-  low |= (uint64_t)(flags & 0xF) << 52; // flags nibble -> bits 52..55
+  low |= (uint64_t)(limit & 0xFFFF);            // limit[15:0]
+  low |= (uint64_t)(base & 0xFFFFFF) << 16;     // base[23:0] -> bits 16..39
+  low |= (uint64_t)access << 40;                // access byte -> bits 48..47
+  low |= (uint64_t)((limit >> 16) & 0xF) << 48; // limit[19:16] -> bits 40..51
+  low |= (uint64_t)(flags & 0xF) << 52;         // flags nibble -> bits 52..55
   low |= (uint64_t)((base >> 24) & 0xFF) << 56; // base[31:24] -? bits 56..63
-  
+
   uint64_t high = 0;
   high |= (uint64_t)((base >> 32) & 0xFFFFFFFF);
 
@@ -74,17 +74,18 @@ static void make_tss_descriptor(uint64_t* gdt, int index, void* tss_ptr, uint32_
   gdt[index + 1] = high;
 }
 
-void set_tss(void)
-{
+void set_tss(void) {
   for (size_t i = 0; i < sizeof(tss); ++i)
-    ((uint8_t*)&tss)[i] = 0;
+    ((uint8_t *)&tss)[i] = 0;
 
   extern uint8_t kstack_top;
   tss.rsp0 = (uint64_t)kstack_top;
 
-  tss.ist1 = (uint64_t)(df_stack + sizeof(df_stack)); // IST1 -> double-fault stack
-  tss.ist2 = (uint64_t)(irq_stack + sizeof(irq_stack)); // IST2 -> example IRQ stack
-  
+  tss.ist1 =
+      (uint64_t)(df_stack + sizeof(df_stack)); // IST1 -> double-fault stack
+  tss.ist2 =
+      (uint64_t)(irq_stack + sizeof(irq_stack)); // IST2 -> example IRQ stack
+
   tss.iomap_base = sizeof(tss);
 
   const int tss_gdt_index = 5;
@@ -94,24 +95,20 @@ void set_tss(void)
   gdtr.limit = sizeof(gdt_entries) - 1;
   gdtr.base = (uint64_t)gdt_entries;
 
-  asm volatile ("lgdt %0 \n" :: "m"(gdtr) : "memory");
+  __asm__ volatile("lgdt %0 \n" ::"m"(gdtr) : "memory");
 
   uint16_t tss_selector = (uint16_t)(tss_gdt_index << 3);
 
-  asm volatile 
-  (
-    "mov ax, %0 \n"
-    "ltr ax \n"
-    : // no outputs
-    : "r"(tss_selector)
-    : "ax", "memory"
-  );
+  __asm__ volatile("mov ax, %0 \n"
+                   "ltr ax \n"
+                   : // no outputs
+                   : "r"(tss_selector)
+                   : "ax", "memory");
 
   return;
 }
 
-void set_gdt(void)
-{
+void set_gdt(void) {
   // null descriptor
   gdt_entries[0] = 0;
 
@@ -130,25 +127,22 @@ void set_gdt(void)
   gdt_entries[3] = make_gdt_entry(UCODE_ACC, CODE_FLAGS);
   gdt_entries[4] = make_gdt_entry(UDATA_ACC, DATA_FLAGS);
 
-  asm volatile
-  (
-    "lgdt %0 \n"
-    "push qword ptr 0x08 \n"
-    "lea rax, [rip + 1f] \n"
-    "push rax \n"
-    "retfq \n"
+  __asm__ volatile("lgdt %0 \n"
+                   "push qword ptr 0x08 \n"
+                   "lea rax, [rip + 1f] \n"
+                   "push rax \n"
+                   "retfq \n"
 
-    "1: \n"
-    "mov ax, 0x10 \n"
-    "mov ds, ax \n"
-    "mov es, ax \n"
-    "mov fs, ax \n"
-    "mov gs, ax \n"
-    "mov ss, ax \n"
-    :
-    : "m"(gdtr)
-    : "rax", "ax", "memory"
-  );
+                   "1: \n"
+                   "mov ax, 0x10 \n"
+                   "mov ds, ax \n"
+                   "mov es, ax \n"
+                   "mov fs, ax \n"
+                   "mov gs, ax \n"
+                   "mov ss, ax \n"
+                   :
+                   : "m"(gdtr)
+                   : "rax", "ax", "memory");
 
   return;
 }

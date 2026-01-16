@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-int init_memory(volatile struct limine_memmap_request *memmap_req) {
+extern "C" int init_memory(volatile struct limine_memmap_request *memmap_req) {
   if (memmap_req == NULL)
     return 1;
   if (memmap_req->response == NULL)

@@ -54,7 +54,7 @@ void clear_screen(void) {
   volatile struct limine_framebuffer *screen = get_screen();
   for (volatile uint64_t y = 0; y < screen->height; ++y) {
     for (volatile uint64_t x = 0; x < screen->width; ++x) {
-      Pixel(screen, x, y, 153, 153, 204);
+      Pixel(screen, x, y, DEFAULT_RED, DEFAULT_GREEN, DEFAULT_BLUE);
     }
   }
 }

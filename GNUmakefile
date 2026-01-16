@@ -3,22 +3,31 @@
 override OUTPUT := aecore
 
 # using gnu toolchain
-CC := clang
-CXX := clang++
-AS := llvm-mc
-LD := ld.lld
+# release builds still should be using clang
+TOOLCHAIN_PREFIX = x86_64-elf
+
+CC := $(TOOLCHAIN_PREFIX)-gcc
+CXX := $(TOOLCHAIN_PREFIX)-g++
+AS := $(TOOLCHAIN_PREFIX)-as
+LD := $(TOOLCHAIN_PREFIX)-ld
+
+# CC_RELEASE := clang
+# CXX_RELEASE := clang++
+# AS_RELEASE := llvm-mc
+# LD_RELEASE := ld.lld
 
 # controllable C Flags
-CC_COMMON := -pipe -O2 -flto -msse4.2 -march=native -mtune=native -finline-functions
+CC_COMMON := -pipe -O2 -msse4.2 -march=native -mtune=native -finline-functions
 CFLAGS := $(CC_COMMON) -std=c23
 CXXFLAGS := $(CC_COMMON) -std=c++23
-ASFLAGS := -filetype=obj -triple=x86_64-unknown-none --mattr=+sse,+sse2,+sse3,+sse4.2,-avx
+ASFLAGS := -O2 -mtune=corei7
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
 LDFLAGS := -O2
 
-# target
-override CC += -target x86_64-unknown-none-elf
-override CXX += -target x86_64-unknown-none-elf
+# target (not needed anymore since we're using gcc now)
+# override CC += -target x86_64-unknown-none-elf
+# override CXX += -target x86_64-unknown-none-elf
+# override AS += -filetype=obj -triple=x86_64-unknown-none --mattr=+sse,+sse2,+sse3,+sse4.2,-avx
 
 # internal C flags that should not change
 override COMPILER_FLAGS := \
@@ -36,7 +45,8 @@ override COMPILER_FLAGS := \
 		-mno-80387 \
 		-mno-mmx \
 		-mno-red-zone \
-		-mcmodel=kernel
+		-mcmodel=kernel \
+		-fno-lto
 
 override CFLAGS += $(COMPILER_FLAGS)
 override CXXFLAGS += $(COMPILER_FLAGS) \
@@ -50,7 +60,7 @@ override CXXFLAGS += $(COMPILER_FLAGS) \
 # internal C preprocessor flags that should not be changed
 override CPPFLAGS += \
 		-I src \
-		-DLIMINE_API_REVISION=3 \
+		-DLIMINE_API_REVISION=4 \
 		-MMD \
 		-MP \
 		-I limine-protocol/include
