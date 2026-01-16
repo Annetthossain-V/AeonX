@@ -12,4 +12,4 @@ Low priority:
 
 Far Future:
 * add multi core cpu support
-* add gcc build support
+* add clang build support

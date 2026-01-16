@@ -2,7 +2,7 @@
 
 override OUTPUT := aecore
 
-# using llvm toolchain
+# using gnu toolchain
 CC := clang
 CXX := clang++
 AS := llvm-mc
@@ -10,8 +10,8 @@ LD := ld.lld
 
 # controllable C Flags
 CC_COMMON := -pipe -O2 -flto -msse4.2 -march=native -mtune=native -finline-functions
-CFLAGS := $(CC_COMMON) -std=gnu23
-CXXFLAGS := $(CC_COMMON) -std=gnu++23
+CFLAGS := $(CC_COMMON) -std=c23
+CXXFLAGS := $(CC_COMMON) -std=c++23
 ASFLAGS := -filetype=obj -triple=x86_64-unknown-none --mattr=+sse,+sse2,+sse3,+sse4.2,-avx
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
 LDFLAGS := -O2
@@ -53,7 +53,7 @@ override CPPFLAGS += \
 		-DLIMINE_API_REVISION=3 \
 		-MMD \
 		-MP \
-		-I limine
+		-I limine-protocol/include
 
 override LDFLAGS += \
 		-m elf_x86_64 \
@@ -75,7 +75,7 @@ all: target/bin/$(OUTPUT)
 
 -include $(HEADER_DEPS)
 
-target/bin/$(OUTPUT): GNUmakefile linker.lds $(OBJ)
+target/bin/$(OUTPUT): GNUmakefile linker.lds limine-protocol  $(OBJ)
 		mkdir -p "$(dir $@)"
 		$(LD) $(LDFLAGS) $(OBJ) -o $@
 
@@ -91,6 +91,9 @@ target/obj/%.cc.o: %.cc GNUmakefile
 		mkdir -p "$(dir $@)"
 		$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
+limine-protocol:
+		git clone --dept=1  https://codeberg.org/Limine/limine-protocol.git ./limine-protocol
+
 .PHONY: clean
 clean:
-		rm -rf target aeonx.iso  # rootfs
+		rm -rf target aeonx.iso rootfs limine limine-protocol

@@ -6,3 +6,4 @@
 /target
 /rootfs
 /src/**/*.pch
+/limine-protocol
