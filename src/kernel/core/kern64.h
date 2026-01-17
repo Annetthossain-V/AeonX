@@ -6,7 +6,8 @@
 extern "C" {
 #endif
 
-void hcf();
+void hcf() __attribute__((noreturn));
+void panic(const char *msg) __attribute__((noreturn));
 
 static inline void outb(unsigned short port, unsigned char byte) {
   __asm__ volatile("out %1, %0" ::"a"(byte), "Nd"(port));

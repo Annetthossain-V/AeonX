@@ -8,7 +8,7 @@ pixel:
   # rdi = x, rsi = y, rdx = r, rcx = g, r8 = b
   # on system-v xmm0-xmm15 are caller-saved
   # all 8 bit values are promoted to 32 bit
-  subq $8, %rsp
+  subq $8, %rsp # align stack
 
   # clear used registers
   pxor %xmm0, %xmm0
@@ -47,11 +47,11 @@ pixel:
   movd %xmm2, %r9d # xmm2[0:31] -> r9d
 
   callq Pixel
-  addq $8, %rsp
+  addq $8, %rsp # align stack
   xorl %eax, %eax
   retq
 .err:
-  addq $8, %rsp
+  addq $8, %rsp # restore stack
   movl $1, %eax
   retq
 
