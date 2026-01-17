@@ -17,5 +17,9 @@ void _main(volatile struct limine_framebuffer_request *framebuffer_req,
   if (screen_init(framebuffer_req) != 0)
     __asm__("jmp hcf");
 
+  for (size_t x = 0; x < 582; ++x)
+    for (size_t y = 0; y < 324; ++y)
+      pixel(x, y, 23, 43, 93);
+
   return;
 }

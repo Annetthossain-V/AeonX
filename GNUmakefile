@@ -17,17 +17,17 @@ LD := $(TOOLCHAIN_PREFIX)-ld
 # LD_RELEASE := ld.lld
 
 # controllable C Flags
-CC_COMMON := -pipe -O2 -msse4.2 -march=native -mtune=native -finline-functions
+CC_COMMON := -pipe -O0 -march=native -mtune=native -msse -finline-functions 
 CFLAGS := $(CC_COMMON) -std=c23
 CXXFLAGS := $(CC_COMMON) -std=c++23
-ASFLAGS := -O2 -mtune=corei7
+ASFLAGS := -O2
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
-LDFLAGS := -O2
+LDFLAGS := -O2 
 
 # target (not needed anymore since we're using gcc now)
 # override CC += -target x86_64-unknown-none-elf
 # override CXX += -target x86_64-unknown-none-elf
-# override AS += -filetype=obj -triple=x86_64-unknown-none --mattr=+sse,+sse2,+sse3,+sse4.2,-avx
+# override AS += -filetype=obj -triple=x86_64-unknown-none
 
 # internal C flags that should not change
 override COMPILER_FLAGS := \
