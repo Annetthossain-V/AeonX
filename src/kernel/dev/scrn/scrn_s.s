@@ -2,12 +2,13 @@
 .section .text
 .type pixel, @function
 .globl pixel
-# 28 instruction for this function is crazy
+# 30 instruction for this function is crazy
 # need to optimize this later (TODO)
 pixel:
   # rdi = x, rsi = y, rdx = r, rcx = g, r8 = b
   # on system-v xmm0-xmm15 are caller-saved
   # all 8 bit values are promoted to 32 bit
+  subq $8, %rsp
 
   # clear used registers
   pxor %xmm0, %xmm0
@@ -45,10 +46,12 @@ pixel:
   psrldq $8, %xmm2 # shift b to lower 32 bits of lower 64 bits of xmm2
   movd %xmm2, %r9d # xmm2[0:31] -> r9d
 
-  callq Pixel 
+  callq Pixel
+  addq $8, %rsp
   xorl %eax, %eax
   retq
 .err:
+  addq $8, %rsp
   movl $1, %eax
   retq
 
