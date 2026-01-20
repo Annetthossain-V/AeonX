@@ -1,6 +1,6 @@
 High priority:
 * make malloc
-* add c++ support to all header files
+* add draw block convention
 
 Medium priority:
 * make printf

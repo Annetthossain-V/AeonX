@@ -27,9 +27,9 @@ void _main(volatile struct limine_framebuffer_request *framebuffer_req,
   if (mp_init(mp_req) != 0)
     panic("Unable to initialize MP");
 
-  for (size_t x = 0; x < 582; ++x)
-    for (size_t y = 0; y < 324; ++y)
-      pixel(x, y, 23, 43, 93);
+  for (size_t x = 0; x < 512; ++x)
+    for (size_t y = 0; y < 20; ++y)
+      drawblk(x, y);
 
   return;
 }

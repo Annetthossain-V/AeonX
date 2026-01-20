@@ -3,7 +3,6 @@
 #include <dev/scrn/scrn.h>
 #include <limine.h>
 #include <stddef.h>
-#include <string.h>
 
 // pixel is implemented in scrn.s
 
@@ -19,12 +18,14 @@ void Pixel(volatile struct limine_framebuffer *fb, uint64_t x, uint64_t y,
   uint8_t *p = row + x * bytes_per_pixel;
 
   uint32_t color = 0;
-  if (fb->red_mask_size)
-    color |= ((uint32_t)r >> (8 - fb->red_mask_size)) << fb->red_mask_shift;
-  if (fb->green_mask_size)
-    color |= ((uint32_t)g >> (8 - fb->green_mask_size)) << fb->green_mask_shift;
-  if (fb->blue_mask_size)
-    color |= ((uint32_t)b >> (8 - fb->blue_mask_size)) << fb->blue_mask_shift;
+
+  // disable safety for performance
+  // if (fb->red_mask_size)
+  color |= ((uint32_t)r >> (8 - fb->red_mask_size)) << fb->red_mask_shift;
+  // if (fb->green_mask_size)
+  color |= ((uint32_t)g >> (8 - fb->green_mask_size)) << fb->green_mask_shift;
+  // if (fb->blue_mask_size)
+  color |= ((uint32_t)b >> (8 - fb->blue_mask_size)) << fb->blue_mask_shift;
 
   switch (bytes_per_pixel) {
   case 4:
@@ -61,6 +62,13 @@ int screen_init(volatile struct limine_framebuffer_request *frame_buffer) {
   // save screen buffer
   if (save_screen_request(frame_buffer) != 0)
     return 1;
+
+  volatile struct limine_framebuffer *screen = get_screen();
+  if (screen == NULL)
+    return 1;
+
+  if (init_drawblk(screen->height, screen->width) != 0)
+    return 1; // failed to set block size
 
   clear_screen();
   return 0;

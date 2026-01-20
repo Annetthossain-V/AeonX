@@ -6,6 +6,9 @@
 #define DEFAULT_GREEN 17
 #define DEFAULT_BLUE 27
 
+#define DRAWBLK_MAX_HEIGTH 1
+#define DRAWBLK_MAX_WIDTH 1
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -15,6 +18,8 @@ void Pixel(volatile struct limine_framebuffer *fb, uint64_t x, uint64_t y,
            uint8_t r, uint8_t g, uint8_t b);
 int pixel(uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b);
 void clear_screen(void);
+
+int drawblk(uint64_t x, uint64_t y); // return number of pixels written
 
 #ifdef __cplusplus
 }
