@@ -49,6 +49,9 @@ void clear_screen(void) {
 
 void drawblk(uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b) {
   volatile struct limine_framebuffer *scrn = get_screen();
+  if (scrn == NULL)
+    return;
+
   uint64_t height = scrn->height;
   uint64_t width = scrn->width;
 
