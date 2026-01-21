@@ -1,5 +1,7 @@
 ## Build dependencies
-    `x86_64-elf-gcc or clang, llvm & lld`
+    `clang`
+    'llvm'
+    'lld'
     `gnu make`
     `limine`
     `git`
