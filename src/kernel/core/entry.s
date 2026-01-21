@@ -3,7 +3,7 @@
 .section .bss
 .align 16
 kstack_bottom:
-  .skip 67108864 # 64 MiB
+  .skip 8388608 # 8 MiB
 .globl kstack_top
 kstack_top:
 

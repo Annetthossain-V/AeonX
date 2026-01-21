@@ -14,8 +14,8 @@ hcf:
 .section .text
 .globl _soft_kernel_reboot
 _soft_kernel_reboot:
-  movq $67108864, %rcx
-  leaq kstack_top - 67108864, %rdi
+  movq $8388608, %rcx
+  leaq kstack_top - 8388608, %rdi
 
   cld
   xorl %eax, %eax
