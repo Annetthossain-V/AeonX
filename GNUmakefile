@@ -1,33 +1,20 @@
 .suffix:
-
 override OUTPUT := aecore
 
-# using gnu toolchain
-# release builds still should be using clang
-TOOLCHAIN_PREFIX = x86_64-elf
+# using llvm toolchain
 
-CC := $(TOOLCHAIN_PREFIX)-gcc
-CXX := $(TOOLCHAIN_PREFIX)-g++
-AS := $(TOOLCHAIN_PREFIX)-as
-LD := $(TOOLCHAIN_PREFIX)-ld
-
-# CC_RELEASE := clang
-# CXX_RELEASE := clang++
-# AS_RELEASE := llvm-mc
-# LD_RELEASE := ld.lld
+CC := clang
+CXX := clang++
+AS := llvm-mc
+LD := ld.lld 
 
 # controllable C Flags
-CC_COMMON := -pipe -O0 -march=native -mtune=native -msse -finline-functions 
-CFLAGS := $(CC_COMMON) -std=c23
-CXXFLAGS := $(CC_COMMON) -std=c++23
-ASFLAGS := -O2
+CC_COMMON := -target x86_64-unknown-none -pipe -O0 -march=native -mtune=native -msse -flto
+CFLAGS := $(CC_COMMON) -std=gnu23
+CXXFLAGS := $(CC_COMMON) -std=gnu++23
+ASFLAGS := -filetype=obj -triple x86_64-unknown-none
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
-LDFLAGS := -O2 
-
-# target (not needed anymore since we're using gcc now)
-# override CC += -target x86_64-unknown-none-elf
-# override CXX += -target x86_64-unknown-none-elf
-# override AS += -filetype=obj -triple=x86_64-unknown-none
+LDFLAGS := -O2
 
 # internal C flags that should not change
 override COMPILER_FLAGS := \
@@ -46,7 +33,6 @@ override COMPILER_FLAGS := \
 		-mno-mmx \
 		-mno-red-zone \
 		-mcmodel=kernel \
-		-fno-lto
 
 override CFLAGS += $(COMPILER_FLAGS)
 override CXXFLAGS += $(COMPILER_FLAGS) \

@@ -4,10 +4,6 @@
 #include <limine.h>
 #include <stddef.h>
 
-// pixel is implemented in scrn.s
-
-// puts safety over performance
-// TODO: make this faster
 void Pixel(volatile struct limine_framebuffer *fb, uint64_t x, uint64_t y,
            uint8_t r, uint8_t g, uint8_t b) {
   if (!fb || x >= fb->width || y >= fb->height)
@@ -19,12 +15,8 @@ void Pixel(volatile struct limine_framebuffer *fb, uint64_t x, uint64_t y,
 
   uint32_t color = 0;
 
-  // disable safety for performance
-  // if (fb->red_mask_size)
   color |= ((uint32_t)r >> (8 - fb->red_mask_size)) << fb->red_mask_shift;
-  // if (fb->green_mask_size)
   color |= ((uint32_t)g >> (8 - fb->green_mask_size)) << fb->green_mask_shift;
-  // if (fb->blue_mask_size)
   color |= ((uint32_t)b >> (8 - fb->blue_mask_size)) << fb->blue_mask_shift;
 
   switch (bytes_per_pixel) {
@@ -55,21 +47,22 @@ void clear_screen(void) {
   }
 }
 
-int screen_init(volatile struct limine_framebuffer_request *frame_buffer) {
-  if (frame_buffer == NULL)
-    return 1;
+void drawblk(uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b) {
+  volatile struct limine_framebuffer *scrn = get_screen();
+  uint64_t height = scrn->height;
+  uint64_t width = scrn->width;
 
-  // save screen buffer
-  if (save_screen_request(frame_buffer) != 0)
-    return 1;
+  if (x > DRAWBLK_MAX_WIDTH || y > DRAWBLK_MAX_HEIGTH)
+    return;
 
-  volatile struct limine_framebuffer *screen = get_screen();
-  if (screen == NULL)
-    return 1;
+  // Calculate exact block boundaries using fixed-point arithmetic
+  uint64_t start_x = (x * width) / 512;
+  uint64_t start_y = (y * height) / 256;
+  uint64_t end_x = ((x + 1) * width) / 512;
+  uint64_t end_y = ((y + 1) * height) / 256;
 
-  if (init_drawblk(screen->height, screen->width) != 0)
-    return 1; // failed to set block size
-
-  clear_screen();
-  return 0;
+  // Fill the block
+  for (uint64_t row = start_y; row < end_y; row++)
+    for (uint64_t col = start_x; col < end_x; col++)
+      Pixel(scrn, col, row, r, g, b);
 }

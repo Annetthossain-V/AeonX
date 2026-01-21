@@ -11,7 +11,7 @@
 
 // screen must be initialized for this function to work
 void panic(const char *msg) {
-  // TODO
+  // TODO:
   __asm__("nop");
   hcf();
 }
@@ -27,9 +27,13 @@ void _main(volatile struct limine_framebuffer_request *framebuffer_req,
   if (mp_init(mp_req) != 0)
     panic("Unable to initialize MP");
 
-  for (size_t x = 0; x < 512; ++x)
-    for (size_t y = 0; y < 20; ++y)
-      drawblk(x, y);
+  for (uint64_t x = 0; x < DRAWBLK_MAX_WIDTH; ++x)
+    for (uint64_t y = 0; y < DRAWBLK_MAX_HEIGTH; ++y)
+      drawblk(x, y, 255, 255, 255);
+
+  drawblk(0, 0, 255, 255, 0);
+  drawblk(0, 1, 0, 0, 255);
+  drawblk(511, 255, 0, 255, 0);
 
   return;
 }
