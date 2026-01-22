@@ -27,7 +27,7 @@ void _main(volatile struct limine_framebuffer_request *framebuffer_req,
   if (mp_init(mp_req) != 0)
     panic("Unable to initialize MP");
 
-  drawblk(0, 0, 255, 0, 255);
+  drawblk(0, 0, 255, 255, 255);
 
   return;
 }
