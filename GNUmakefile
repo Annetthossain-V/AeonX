@@ -110,3 +110,6 @@ limine-protocol:
 .PHONY: clean
 clean:
 		rm -rf target aeonx.iso rootfs limine limine-protocol
+
+clean-rust:
+		rm target/obj/src/kernel/core/rust.o
