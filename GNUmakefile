@@ -24,6 +24,7 @@ RUSTFLAGS := \
 		-C relocation-model=static \
 		-C code-model=kernel \
 		-C target-feature=+sse,-avx,-avx2 \
+		-C no-redzone \
 		--emit obj \
 		-C debuginfo=0 \
 		-C lto=fat
