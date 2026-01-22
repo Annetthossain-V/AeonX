@@ -2,7 +2,7 @@
 #include <core/kern64.h>
 #include <dev/cpu/gdt.h>
 #include <dev/cpu/mp.h>
-#include <dev/memory/pmm/phy_ mem.h>
+#include <dev/memory/pmm/phy_mem.h>
 #include <dev/scrn/internelscrn.h>
 #include <dev/scrn/scrn.h>
 #include <limine.h>

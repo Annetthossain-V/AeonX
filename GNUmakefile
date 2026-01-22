@@ -4,14 +4,11 @@ override OUTPUT := aecore
 # using llvm toolchain
 
 CC := clang
-CXX := clang++
 AS := llvm-mc
 LD := ld.lld 
 
 # controllable C Flags
-CC_COMMON := -target x86_64-unknown-none -pipe -O0 -march=native -mtune=native -msse -flto
-CFLAGS := $(CC_COMMON) -std=gnu23
-CXXFLAGS := $(CC_COMMON) -std=gnu++23
+CFLAGS := -target x86_64-unknown-none -pipe -O0 -march=native -mtune=native -msse -flto -std=gnu23
 ASFLAGS := -filetype=obj -triple x86_64-unknown-none
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
 LDFLAGS := -O2
@@ -62,9 +59,8 @@ override LDFLAGS += \
 override SRCFILES := $(shell find -L src/kernel -type f 2>/dev/null | LC_ALL=C sort)
 override CFILES := $(filter %.c,$(SRCFILES))
 override ASFILES := $(filter %.s,$(SRCFILES))
-override CXXFILES := $(filter %.cc,$(SRCFILES))
-override OBJ = $(addprefix target/obj/,$(CFILES:.c=.c.o) $(ASFILES:.s=.s.o) $(CXXFILES:.cc=.cc.o))
-override HEADER_DEPS := $(addprefix target/obj/,$(CFILES:.c=.c.d) $(ASFILES:.s=.s.d) $(CXXFILES:.cc=.cc.d))
+override OBJ = $(addprefix target/obj/,$(CFILES:.c=.c.o) $(ASFILES:.s=.s.o))
+override HEADER_DEPS := $(addprefix target/obj/,$(CFILES:.c=.c.d) $(ASFILES:.s=.s.d))
 
 .PHONY: all
 all: target/bin/$(OUTPUT)
@@ -82,10 +78,6 @@ target/obj/%.c.o: %.c GNUmakefile
 target/obj/%.s.o: %.s GNUmakefile
 		mkdir -p "$(dir $@)"
 		$(AS) $(ASFLAGS) $< -o $@
-
-target/obj/%.cc.o: %.cc GNUmakefile
-		mkdir -p "$(dir $@)"
-		$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 limine-protocol:
 		git clone --dept=1  https://codeberg.org/Limine/limine-protocol.git ./limine-protocol
