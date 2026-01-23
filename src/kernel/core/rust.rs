@@ -6,8 +6,8 @@ use core::panic::PanicInfo;
 #[path = "../libkrn/bindings.rs"]
 mod bindings;
 
-#[path = "../dev/memory/memory.rs"]
-mod memory;
+#[path = "../dev/dev.rs"]
+mod dev;
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
