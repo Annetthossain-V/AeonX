@@ -1,0 +1,21 @@
+[package]
+name = "rust-kernel-aecore"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+cpu = { path = "dev/cpu/" }
+memory = { path = "dev/memory/" }
+scrn = { path = "dev/scrn/" }
+
+[profile.dev]
+panic = "abort"
+lto = false
+
+[profile.release]
+panic = "abort"
+lto = false
+

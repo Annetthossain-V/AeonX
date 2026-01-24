@@ -24,7 +24,7 @@ int memory_init(volatile struct limine_memmap_request *memmap_req) {
   return 0;
 }
 
-memory_base_t get_memory_base(int type, int index) {
+uint64_t get_usable_ram(uint64_t *size) {
   for (;;)
     ;
 }

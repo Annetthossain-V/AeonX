@@ -14,24 +14,6 @@ ASFLAGS := -filetype=obj -triple x86_64-unknown-none
 CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
 LDFLAGS := -O2
 
-RUST_TARGET := x86_64-unknown-none
-
-RUSTFLAGS := \
-		--target $(RUST_TARGET) \
-		--edition 2024 \
-		-C opt-level=0 \
-		-C panic=abort \
-		-C relocation-model=static \
-		-C code-model=kernel \
-		-C target-feature=+sse,-avx,-avx2 \
-		-C target-cpu=native \
-		-C no-redzone \
-		--emit obj \
-		-C debuginfo=0 \
-		-C lto=fat
-
-RUST_SYSROOT := $(shell rustc --print sysroot)
-
 # internal C flags that should not change
 override COMPILER_FLAGS := \
 		-Wall \
@@ -68,35 +50,26 @@ override LDFLAGS += \
 		--gc-sections \
 		-T linker.lds
 
+override TARGET_DIRS = $(shell find . -type d -name 'target')
+
 override SRCFILES := $(shell find -L src/kernel -type f 2>/dev/null | LC_ALL=C sort)
 override CFILES := $(filter %.c,$(SRCFILES))
 override ASFILES := $(filter %.s,$(SRCFILES))
 
-# Rust build
-RUST_KERNEL := src/kernel/core/rust.rs
-RUST_KERNEL_OBJ := src/kernel/core/rust.o
-
-override OBJ = $(addprefix target/obj/,$(CFILES:.c=.c.o) $(ASFILES:.s=.s.o) $(RUST_KERNEL_OBJ))
+override OBJ = $(addprefix target/obj/,$(CFILES:.c=.c.o) $(ASFILES:.s=.s.o))
 override HEADER_DEPS := $(addprefix target/obj/,$(CFILES:.c=.c.d) $(ASFILES:.s=.s.d))
+
+override LIB_RUST_KERNEL_PATH = src/kernel/rust/target/x86_64-unknown-none/debug/
+override LIB_RUST_KERNEL = rust_kernel_aecore
 
 .PHONY: all
 all: target/bin/$(OUTPUT)
 
-target/obj/$(RUST_KERNEL_OBJ): $(RUST_KERNEL) GNUmakefile
-		mkdir -p "$(dir $@)"
-		$(RUSTC) $(RUSTFLAGS) \
-			--crate-type staticlib \
-			--extern core=$(RUST_SYSROOT)/lib/rustlib/x86_64-unknown-none/lib/libcore-7fdbb61355ee61c7.rlib \
-			--extern core=$(RUST_SYSROOT)/lib/rustlib/x86_64-unknown-none/lib/libcore-7fdbb61355ee61c7.rmeta \
-			--extern compiler_builtins=$(RUST_SYSROOT)/lib/rustlib/x86_64-unknown-none/lib/libcompiler_builtins-108e80388f1e02eb.rlib \
-			--extern compiler_builtins=$(RUST_SYSROOT)/lib/rustlib/x86_64-unknown-none/lib/libcompiler_builtins-108e80388f1e02eb.rmeta \
-			-o $@ $(RUST_KERNEL)
-
 -include $(HEADER_DEPS)
 
-target/bin/$(OUTPUT): GNUmakefile linker.lds limine-protocol  $(OBJ)
+target/bin/$(OUTPUT): GNUmakefile linker.lds limine-protocol rust $(OBJ)
 		mkdir -p "$(dir $@)"
-		$(LD) $(LDFLAGS) $(OBJ) -o $@
+		$(LD) $(LDFLAGS) $(OBJ) -L$(LIB_RUST_KERNEL_PATH) -l$(LIB_RUST_KERNEL) -o $@
 
 target/obj/%.c.o: %.c GNUmakefile
 		mkdir -p "$(dir $@)"
@@ -109,9 +82,11 @@ target/obj/%.s.o: %.s GNUmakefile
 limine-protocol:
 		git clone --dept=1  https://codeberg.org/Limine/limine-protocol.git ./limine-protocol
 
+rust:
+	cd src/kernel/rust && cargo build
+
 .PHONY: clean
 clean:
 		rm -rf target aeonx.iso rootfs limine limine-protocol
-
-clean-rust:
-		rm target/obj/src/kernel/core/rust.o
+		cd src/kernel/rust && cargo clean
+		rm -rf $(TARGET_DIRS)
