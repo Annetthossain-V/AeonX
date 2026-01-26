@@ -1,3 +1,5 @@
+#! /bin/bash
+
 git clone https://codeberg.org/Limine/Limine.git limine --branch=v10.x-binary --dept=1
 
 make -C limine
@@ -19,7 +21,6 @@ cp -v limine/BOOTIA32.EFI rootfs/EFI/BOOT/
 # utility
 mkdir -p rootfs/bin
 mkdir -p rootfs/lib
-mkdir -p rootfs/tmp
 mkdir -p rootfs/var
 mkdir -p rootfs/home
 mkdir -p rootfs/etc

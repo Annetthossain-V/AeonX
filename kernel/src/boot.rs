@@ -52,7 +52,7 @@ global_asm!
 (
   ".section .bss",
   ".align 16",
-  ".skip 8388608", // 8 MiB
+  ".skip 16777216", // 16 MiB
   ".globl kstack_top",
   "kstack_top:",
 
@@ -65,7 +65,6 @@ global_asm!
     "call __enable_sse",
     "jmp __boot_kernel",
 
-  ".globl __enable_sse",
   ".type __enable_sse, @function",
   "__enable_sse:",
     "push rbp",
