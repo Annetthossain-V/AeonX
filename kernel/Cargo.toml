@@ -1,0 +1,20 @@
+[package]
+name = "aecore"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cpu = { path = "dev/cpu/" }
+memory = { path = "dev/memory/" }
+scrn = { path = "dev/scrn/" }
+kstd = { path = "kstd/" }
+limine = "0.5.0"
+
+[profile.dev]
+panic = "abort"
+lto = false
+
+[profile.release]
+panic = "abort"
+lto = false
+

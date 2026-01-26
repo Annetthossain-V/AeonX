@@ -1,0 +1,6 @@
+#! /bin/bash
+
+rm -vrf rootfs/ aeonx.iso limine
+cd kernel
+cargo clean
+rm -rvf $(find ./ -type d -name 'target')

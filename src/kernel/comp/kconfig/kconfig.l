@@ -1,1 +1,0 @@
-# KConfig Language Lexer

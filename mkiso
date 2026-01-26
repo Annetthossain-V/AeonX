@@ -3,8 +3,12 @@ git clone https://codeberg.org/Limine/Limine.git limine --branch=v10.x-binary --
 make -C limine
 mkdir -p rootfs
 
+cd kernel
+cargo build
+cd ../
+
 mkdir -p rootfs/boot
-cp -v target/bin/aecore rootfs/boot/
+cp -v ./kernel/target/x86_64-unknown-none/debug/aecore rootfs/boot/
 mkdir -p rootfs/boot/limine
 cp -v limine.conf limine/limine-bios.sys limine/limine-bios-cd.bin limine/limine-uefi-cd.bin rootfs/boot/limine/
 
