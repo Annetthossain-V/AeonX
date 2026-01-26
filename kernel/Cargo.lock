@@ -39,6 +39,10 @@ dependencies = [
 [[package]]
 name = "memory"
 version = "0.1.0"
+dependencies = [
+ "kstd",
+ "limine",
+]
 
 [[package]]
 name = "noto-sans-mono-bitmap"

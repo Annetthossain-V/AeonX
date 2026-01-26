@@ -43,6 +43,7 @@ unsafe fn __rust_start(
   cpu::gdt::set_gdt();
   cpu::gdt::set_tss();
 
+  memory::initialize_memory(memmap_request)?;
   scrn::intern::initialize_display(framebuffer_request)?;
 
   Ok(())
