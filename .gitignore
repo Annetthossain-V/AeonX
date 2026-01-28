@@ -1,10 +1,6 @@
 /limine
-/bin 
-/obj
-/arcroot
 /aeonx.iso
 /target
 /rootfs
-/src/**/*.pch
-/limine-protocol
 target/
+/kernel/**/Cargo.lock
