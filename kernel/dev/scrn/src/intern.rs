@@ -7,6 +7,7 @@ pub const DEFAULT_GREEN: u8 = 17;
 pub const DEFAULT_BLUE: u8 = 27;
 
 static mut DISPLAY_FRAMEBUFFER: *const FramebufferResponse = core::ptr::null();
+pub static SCREEN_LOCK: spin::Mutex<()> = spin::Mutex::new(());
 
 #[allow(unsafe_op_in_unsafe_fn)]
 pub unsafe fn initialize_display(
@@ -16,6 +17,7 @@ pub unsafe fn initialize_display(
     return Err(DisplayFramebufferInvalid);
   }
 
+  let lock = SCREEN_LOCK.lock();
   let response = match framebuffer_request.get_response() {
     Some(res) => res,
     None => return Err(DisplayFramebufferInvalid),
@@ -30,10 +32,12 @@ pub unsafe fn initialize_display(
     return Err(DisplayFramebufferInvalid);
   }
 
+  drop(lock);
   clear_screen();
   Ok(())
 }
 
+// not thread safe
 pub fn draw_pixel(x: u64, y: u64, r: u8, g: u8, b: u8) {
   unsafe {
     let framebuffer = match (*DISPLAY_FRAMEBUFFER).framebuffers().nth(0) {
@@ -69,8 +73,10 @@ pub fn draw_pixel(x: u64, y: u64, r: u8, g: u8, b: u8) {
   }
 }
 
+// not thread safe
 pub fn clear_screen() {
   unsafe {
+    let lock = SCREEN_LOCK.lock();
     let framebuffer = match (*DISPLAY_FRAMEBUFFER).framebuffers().nth(0) {
       Some(frame) => frame,
       None => return,
@@ -81,5 +87,7 @@ pub fn clear_screen() {
         draw_pixel(x, y, DEFAULT_RED, DEFAULT_GREEN, DEFAULT_BLUE);
       }
     }
+
+    drop(lock);
   }
 }
