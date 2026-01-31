@@ -3,4 +3,4 @@
 /rootfs
 /src/**/*.pch
 /limine-protocol
-
+/target
