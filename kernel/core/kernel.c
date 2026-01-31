@@ -3,7 +3,6 @@
 #include <dev/cpu/gdt.h>
 #include <dev/cpu/mp.h>
 #include <dev/memory/pmm/phy_mem.h>
-#include <dev/scrn/internelscrn.h>
 #include <dev/scrn/scrn.h>
 #include <limine.h>
 #include <stddef.h>
@@ -12,7 +11,6 @@
 // screen must be initialized for this function to work
 void panic(const char *msg) {
   // TODO:
-  __asm__("nop");
   hcf();
 }
 

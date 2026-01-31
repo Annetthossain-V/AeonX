@@ -1,5 +1,5 @@
 Extreme priority:
-* Clean up scrn
+* rename all .s files to .S
 
 High priority:
 * make malloc

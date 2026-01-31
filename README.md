@@ -1,9 +1,9 @@
 ## Build dependencies
-    `clang`
-    'llvm'
-    'lld'
-    `gnu make`
-    `limine`
-    `git`
-    `xorriso`
-
+```
+  intel C compiler
+  lld
+  gnu make
+  limine
+  git
+  xorriso
+```

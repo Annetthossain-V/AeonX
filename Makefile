@@ -8,7 +8,7 @@ AS := icx
 LD := ld.lld 
 
 # controllable C Flags
-CFLAGS := -target x86_64-unknown-none -pipe -O3 -flto -std=gnu17 -march=native -mtune=native
+CFLAGS := -target x86_64-unknown-none -pipe -O0 -flto -std=gnu17 -march=native -mtune=native
 ASFLAGS := -target x86_64-unknown-none
 CPPFLAGS := -Ikernel/libkrn/ -Ikernel/ -masm=intel
 LDFLAGS := -O2
@@ -61,15 +61,15 @@ all: target/bin/$(OUTPUT)
 
 -include $(HEADER_DEPS)
 
-target/bin/$(OUTPUT): GNUmakefile linker.lds limine-protocol  $(OBJ)
+target/bin/$(OUTPUT): Makefile linker.lds limine-protocol  $(OBJ)
 		mkdir -p "$(dir $@)"
 		$(LD) $(LDFLAGS) $(OBJ) -o $@
 
-target/obj/%.c.o: %.c GNUmakefile
+target/obj/%.c.o: %.c Makefile
 		mkdir -p "$(dir $@)"
 		$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-target/obj/%.s.o: %.s GNUmakefile
+target/obj/%.s.o: %.s Makefile
 		mkdir -p "$(dir $@)"
 		$(AS) $(ASFLAGS) -c $< -o $@
 
