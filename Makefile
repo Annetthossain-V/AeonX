@@ -8,7 +8,7 @@ AS := icx
 LD := ld.lld 
 
 # controllable C Flags
-CFLAGS := -target x86_64-unknown-none -pipe -O0 -flto -std=gnu17 -march=native -mtune=native
+CFLAGS := -target x86_64-unknown-none -pipe -O0 -flto -std=gnu17 -march=x86-64-v2 -mtune=native
 ASFLAGS := -target x86_64-unknown-none
 CPPFLAGS := -Ikernel/libkrn/ -Ikernel/ -masm=intel
 LDFLAGS := -O2
@@ -51,10 +51,10 @@ override LDFLAGS += \
 
 override SRCFILES := $(shell find -L kernel/ -type f 2>/dev/null | LC_ALL=C sort)
 override CFILES := $(filter %.c,$(SRCFILES))
-override ASFILES := $(filter %.s,$(SRCFILES))
+override ASFILES := $(filter %.S,$(SRCFILES))
 
-override OBJ = $(addprefix target/obj/,$(CFILES:.c=.c.o) $(ASFILES:.s=.s.o))
-override HEADER_DEPS := $(addprefix target/obj/,$(CFILES:.c=.c.d) $(ASFILES:.s=.s.d))
+override OBJ = $(addprefix target/obj/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o))
+override HEADER_DEPS := $(addprefix target/obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d))
 
 .PHONY: all
 all: target/bin/$(OUTPUT)
@@ -69,7 +69,7 @@ target/obj/%.c.o: %.c Makefile
 		mkdir -p "$(dir $@)"
 		$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-target/obj/%.s.o: %.s Makefile
+target/obj/%.S.o: %.S Makefile
 		mkdir -p "$(dir $@)"
 		$(AS) $(ASFLAGS) -c $< -o $@
 

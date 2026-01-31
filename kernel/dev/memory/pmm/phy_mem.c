@@ -1,5 +1,4 @@
 #include "phy_mem.h"
-#include <core/kern64.h>
 #include <limine.h>
 #include <stddef.h>
 #include <stdint.h>

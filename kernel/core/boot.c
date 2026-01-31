@@ -1,5 +1,4 @@
-#include "kernel.h"
-#include <core/kern64.h>
+#include <core/kernel.h>
 #include <limine.h>
 #include <stdbool.h>
 #include <stddef.h>

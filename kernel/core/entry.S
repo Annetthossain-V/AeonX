@@ -2,7 +2,6 @@
 
 .section .bss
 .align 16
-kstack_bottom:
   .skip 8388608 # 8 MiB
 .globl kstack_top
 kstack_top:
@@ -26,6 +25,7 @@ _start:
   hlt
   jmp hcf
 
+.section .text
 __enable_sse:
   push rbp
   mov rbp, rsp

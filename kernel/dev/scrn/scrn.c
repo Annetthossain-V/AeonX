@@ -1,4 +1,3 @@
-#include <core/kern64.h>
 #include <dev/scrn/scrn.h>
 #include <limine.h>
 #include <stddef.h>

@@ -1,5 +1,4 @@
-#include "kernel.h"
-#include <core/kern64.h>
+#include <core/kernel.h>
 #include <dev/cpu/gdt.h>
 #include <dev/cpu/mp.h>
 #include <dev/memory/pmm/phy_mem.h>
