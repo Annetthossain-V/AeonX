@@ -19,7 +19,7 @@ void Pixel(volatile struct limine_framebuffer *fb, uint64_t x, uint64_t y,
            uint8_t r, uint8_t g, uint8_t b);
 void clear_screen(void);
 
-void drawblk(uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b);
+void write_text(const char *text);
 
 #ifdef __cplusplus
 }

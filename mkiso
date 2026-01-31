@@ -1,4 +1,8 @@
+#! /bin/bash
+
 git clone https://codeberg.org/Limine/Limine.git limine --branch=v10.x-binary --dept=1
+
+make
 
 make -C limine
 mkdir -p rootfs
@@ -23,3 +27,5 @@ mkdir -p rootfs/etc
 xorriso -as mkisofs -R -r -J -b boot/limine/limine-bios-cd.bin -no-emul-boot -boot-load-size 4 -boot-info-table -hfsplus -apm-block-size 2048 --efi-boot boot/limine/limine-uefi-cd.bin -efi-boot-part --efi-boot-image --protective-msdos-label rootfs -o aeonx.iso
 
 ./limine/limine bios-install aeonx.iso
+
+qemu-system-x86_64 -cdrom aeonx.iso -display sdl

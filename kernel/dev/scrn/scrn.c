@@ -46,26 +46,3 @@ void clear_screen(void) {
     }
   }
 }
-
-void drawblk(uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b) {
-  volatile struct limine_framebuffer *scrn = get_screen();
-  if (scrn == NULL)
-    return;
-
-  uint64_t height = scrn->height;
-  uint64_t width = scrn->width;
-
-  if (x > DRAWBLK_MAX_WIDTH || y > DRAWBLK_MAX_HEIGTH)
-    return;
-
-  // Calculate exact block boundaries using fixed-point arithmetic
-  uint64_t start_x = (x * width) / 512;
-  uint64_t start_y = (y * height) / 256;
-  uint64_t end_x = ((x + 1) * width) / 512;
-  uint64_t end_y = ((y + 1) * height) / 256;
-
-  // Fill the block
-  for (uint64_t row = start_y; row < end_y; row++)
-    for (uint64_t col = start_x; col < end_x; col++)
-      Pixel(scrn, col, row, r, g, b);
-}

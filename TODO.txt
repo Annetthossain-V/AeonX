@@ -1,13 +1,20 @@
+Extreme priority:
+* Clean up scrn
+
 High priority:
 * make malloc
-
-Medium priority:
+* make write_text
 * make printf
 
-Low priority:
+Medium priority:
 * make idt
 * add acpi
 * add timers
+
+Low priority:
+* add usb support
+* add keyboard support
+* add disk support
 
 Far Future:
 * add multi core cpu support

@@ -10,16 +10,3 @@ hcf:
   cli
   hlt
   jmp hcf
-
-.section .text
-.globl _soft_kernel_reboot
-_soft_kernel_reboot:
-  movq $8388608, %rcx
-  leaq kstack_top - 8388608, %rdi
-
-  cld
-  xorl %eax, %eax
-  rep stosb
-
-  jmp _start
-  

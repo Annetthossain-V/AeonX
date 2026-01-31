@@ -3,32 +3,15 @@ override OUTPUT := aecore
 
 # using llvm toolchain
 
-CC := clang
-AS := llvm-mc
-RUSTC := rustc
+CC := icx
+AS := icx
 LD := ld.lld 
 
 # controllable C Flags
-CFLAGS := -target x86_64-unknown-none -pipe -O0 -march=native -mtune=native -msse -flto -std=gnu23
-ASFLAGS := -filetype=obj -triple x86_64-unknown-none
-CPPFLAGS := -Isrc/kernel/libkrn/ -Isrc/kernel/ -masm=intel
+CFLAGS := -target x86_64-unknown-none -pipe -O3 -flto -std=gnu17 -march=native -mtune=native
+ASFLAGS := -target x86_64-unknown-none
+CPPFLAGS := -Ikernel/libkrn/ -Ikernel/ -masm=intel
 LDFLAGS := -O2
-
-RUST_TARGET := x86_64-unknown-none
-
-RUSTFLAGS := \
-		--target $(RUST_TARGET) \
-		--edition 2024 \
-		-C opt-level=0 \
-		-C panic=abort \
-		-C relocation-model=static \
-		-C code-model=kernel \
-		-C target-feature=+sse,-avx,-avx2 \
-		--emit obj \
-		-C debuginfo=0 \
-		-C lto=fat
-
-RUST_SYSROOT := $(shell rustc --print sysroot)
 
 # internal C flags that should not change
 override COMPILER_FLAGS := \
@@ -41,12 +24,12 @@ override COMPILER_FLAGS := \
 		-ffunction-sections \
 		-fdata-sections \
 		-m64 \
-		-march=x86-64 \
 		-mabi=sysv \
 		-mno-80387 \
 		-mno-mmx \
 		-mno-red-zone \
 		-mcmodel=kernel \
+		-msse4.2
 
 override CFLAGS += $(COMPILER_FLAGS)
 
@@ -66,29 +49,15 @@ override LDFLAGS += \
 		--gc-sections \
 		-T linker.lds
 
-override SRCFILES := $(shell find -L src/kernel -type f 2>/dev/null | LC_ALL=C sort)
+override SRCFILES := $(shell find -L kernel/ -type f 2>/dev/null | LC_ALL=C sort)
 override CFILES := $(filter %.c,$(SRCFILES))
 override ASFILES := $(filter %.s,$(SRCFILES))
 
-# Rust build
-RUST_KERNEL := src/kernel/core/rust.rs
-RUST_KERNEL_OBJ := src/kernel/core/rust.o
-
-override OBJ = $(addprefix target/obj/,$(CFILES:.c=.c.o) $(ASFILES:.s=.s.o) $(RUST_KERNEL_OBJ))
+override OBJ = $(addprefix target/obj/,$(CFILES:.c=.c.o) $(ASFILES:.s=.s.o))
 override HEADER_DEPS := $(addprefix target/obj/,$(CFILES:.c=.c.d) $(ASFILES:.s=.s.d))
 
 .PHONY: all
 all: target/bin/$(OUTPUT)
-
-target/obj/$(RUST_KERNEL_OBJ): $(RUST_KERNEL) GNUmakefile
-		mkdir -p "$(dir $@)"
-		$(RUSTC) $(RUSTFLAGS) \
-			--crate-type staticlib \
-			--extern core=$(RUST_SYSROOT)/lib/rustlib/x86_64-unknown-none/lib/libcore-7fdbb61355ee61c7.rlib \
-			--extern core=$(RUST_SYSROOT)/lib/rustlib/x86_64-unknown-none/lib/libcore-7fdbb61355ee61c7.rmeta \
-			--extern compiler_builtins=$(RUST_SYSROOT)/lib/rustlib/x86_64-unknown-none/lib/libcompiler_builtins-108e80388f1e02eb.rlib \
-			--extern compiler_builtins=$(RUST_SYSROOT)/lib/rustlib/x86_64-unknown-none/lib/libcompiler_builtins-108e80388f1e02eb.rmeta \
-			-o $@ $(RUST_KERNEL)
 
 -include $(HEADER_DEPS)
 
@@ -102,7 +71,7 @@ target/obj/%.c.o: %.c GNUmakefile
 
 target/obj/%.s.o: %.s GNUmakefile
 		mkdir -p "$(dir $@)"
-		$(AS) $(ASFLAGS) $< -o $@
+		$(AS) $(ASFLAGS) -c $< -o $@
 
 limine-protocol:
 		git clone --dept=1  https://codeberg.org/Limine/limine-protocol.git ./limine-protocol
