@@ -11,6 +11,8 @@ int screen_init(volatile struct limine_framebuffer_request *frame_buffer) {
     return 1;
 
   DISPLAY = frame_buffer->response->framebuffers[0];
+  write_text_init(DISPLAY->width, DISPLAY->height);
+
   clear_screen();
   return 0;
 }
